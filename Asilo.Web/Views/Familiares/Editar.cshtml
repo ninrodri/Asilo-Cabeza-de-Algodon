@@ -1,0 +1,72 @@
+﻿@model Asilo.Web.Models.Familiar
+
+@{
+    ViewData["Title"] = "Editar familiar";
+}
+
+<div class="container mt-4">
+
+    <h2>Editar familiar</h2>
+
+    <form asp-action="Editar" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="NombreCompleto" class="form-label">Nombre completo</label>
+            <input asp-for="NombreCompleto" class="form-control" />
+            <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Parentesco" class="form-label">Parentesco</label>
+            <input asp-for="Parentesco" class="form-control" />
+            <span asp-validation-for="Parentesco" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Telefono" class="form-label">Teléfono</label>
+            <input asp-for="Telefono" class="form-control" />
+            <span asp-validation-for="Telefono" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Correo" class="form-label">Correo electrónico</label>
+            <input asp-for="Correo" class="form-control" />
+            <span asp-validation-for="Correo" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Direccion" class="form-label">Dirección</label>
+            <input asp-for="Direccion" class="form-control" />
+            <span asp-validation-for="Direccion" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PacienteId" class="form-label">Interno relacionado</label>
+
+            <select asp-for="PacienteId" class="form-select">
+                <option value="">Seleccione un interno</option>
+
+                @foreach (var paciente in ViewBag.Pacientes)
+                {
+                    <option value="@paciente.Id">
+                        @paciente.NombreCompleto
+                    </option>
+                }
+            </select>
+
+            <span asp-validation-for="PacienteId" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Guardar cambios
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

@@ -4,12 +4,12 @@ POST {{Asilo_Notificaciones_Api_HostAddress}}/api/notificaciones
 Content-Type: application/json
 
 {
-  "paciente": "Carlos Lopez",
-  "familiar": "Ana Lopez",
-  "correoFamiliar": "ana@gmail.com",
+  "paciente": "Ana Maria Reyes Ordóñez",
+  "familiar": "Ana Maria Reyes Ordóñez",
+  "correoFamiliar": "nincy2002r@gmail.com",
   "medicoReferido": "Dra. Maria Perez",
   "especialidad": "Cardiologia",
-  "motivo": "Presion arterial elevada"
+  "motivo": "Prueba de notificación del sistema"
 }
-    
+
 ###

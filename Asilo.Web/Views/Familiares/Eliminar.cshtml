@@ -1,0 +1,60 @@
+﻿@model Asilo.Web.Models.Familiar
+
+@{
+    ViewData["Title"] = "Eliminar familiar";
+}
+
+<div class="container mt-4">
+
+    <h2>Eliminar familiar</h2>
+
+    <div class="alert alert-warning">
+        ¿Está seguro de que desea eliminar este familiar?
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+
+            <p>
+                <strong>Nombre:</strong>
+                @Model.NombreCompleto
+            </p>
+
+            <p>
+                <strong>Parentesco:</strong>
+                @Model.Parentesco
+            </p>
+
+            <p>
+                <strong>Teléfono:</strong>
+                @Model.Telefono
+            </p>
+
+            <p>
+                <strong>Correo:</strong>
+                @Model.Correo
+            </p>
+
+            <p>
+                <strong>Interno relacionado:</strong>
+                @Model.Paciente?.NombreCompleto
+            </p>
+
+        </div>
+    </div>
+
+    <form asp-action="Eliminar" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <button type="submit" class="btn btn-danger">
+            Sí, eliminar
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

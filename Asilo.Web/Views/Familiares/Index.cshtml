@@ -36,6 +36,7 @@
                             <th>Teléfono</th>
                             <th>Correo</th>
                             <th>Interno</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
 
@@ -50,6 +51,21 @@
                                 <td>@familiar.Telefono</td>
                                 <td>@familiar.Correo</td>
                                 <td>@familiar.Paciente?.NombreCompleto</td>
+                                <td>
+                                    <a asp-action="Editar"
+                                       asp-route-id="@familiar.Id"
+                                       class="btn btn-warning btn-sm">
+                                        Editar
+                                    </a>
+
+                                    <a asp-action="Eliminar"
+                                       asp-route-id="@familiar.Id"
+                                       class="btn btn-danger btn-sm">
+                                        Eliminar
+                                    </a>
+
+                                </td>
+
                             </tr>
                         }
 
