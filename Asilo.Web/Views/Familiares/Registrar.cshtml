@@ -1,0 +1,147 @@
+﻿@model Asilo.Web.Models.Familiar
+
+@{
+    ViewData["Title"] = "Registrar familiar";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h1>Registrar familiar</h1>
+        <p class="text-muted">
+            Registre los datos del familiar responsable y relaciónelo con un interno.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form asp-action="Registrar" method="post">
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Interno
+                    </label>
+
+                    <select asp-for="PacienteId"
+                            class="form-select">
+
+                        <option value="">
+                            -- Seleccione un interno --
+                        </option>
+
+                        @foreach (var paciente in ViewBag.Pacientes)
+                        {
+                            <option value="@paciente.Id">
+                                @paciente.NombreCompleto
+                            </option>
+                        }
+
+                    </select>
+
+                    <span asp-validation-for="PacienteId"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NombreCompleto"
+                           class="form-label">
+                        Nombre completo
+                    </label>
+
+                    <input asp-for="NombreCompleto"
+                           class="form-control" />
+
+                    <span asp-validation-for="NombreCompleto"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Parentesco"
+                           class="form-label">
+                        Parentesco
+                    </label>
+
+                    <select asp-for="Parentesco"
+                            class="form-select">
+
+                        <option value="">
+                            -- Seleccione parentesco --
+                        </option>
+
+                        <option value="Hijo/a">Hijo/a</option>
+                        <option value="Hermano/a">Hermano/a</option>
+                        <option value="Nieto/a">Nieto/a</option>
+                        <option value="Esposo/a">Esposo/a</option>
+                        <option value="Sobrino/a">Sobrino/a</option>
+                        <option value="Otro">Otro</option>
+
+                    </select>
+
+                    <span asp-validation-for="Parentesco"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Telefono"
+                           class="form-label">
+                        Teléfono
+                    </label>
+
+                    <input asp-for="Telefono"
+                           class="form-control" />
+
+                    <span asp-validation-for="Telefono"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Correo"
+                           class="form-label">
+                        Correo electrónico
+                    </label>
+
+                    <input asp-for="Correo"
+                           class="form-control" />
+
+                    <span asp-validation-for="Correo"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Direccion"
+                           class="form-label">
+                        Dirección
+                    </label>
+
+                    <input asp-for="Direccion"
+                           class="form-control" />
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Registrar familiar
+                </button>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

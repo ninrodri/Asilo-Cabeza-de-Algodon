@@ -1,0 +1,17 @@
+services:
+  asilo.web:
+    image: ${DOCKER_REGISTRY-}asiloweb
+    build:
+      context: .
+      dockerfile: Asilo.Web/Dockerfile
+    environment:
+      - Microservicios__Notificaciones=http://asilo.notificaciones.api:8080/
+    depends_on:
+      - asilo.notificaciones.api
+
+  asilo.notificaciones.api:
+    image: ${DOCKER_REGISTRY-}asilonotificacionesapi
+    build:
+      context: .
+      dockerfile: Asilo.Notificaciones.Api/Dockerfile
+

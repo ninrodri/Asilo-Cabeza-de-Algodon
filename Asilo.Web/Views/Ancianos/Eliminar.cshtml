@@ -1,0 +1,60 @@
+﻿@model Asilo.Web.Models.Anciano
+
+@{
+    ViewData["Title"] = "Eliminar interno";
+}
+
+<div class="container mt-4">
+
+    <div class="alert alert-warning">
+        <h2>Confirmar eliminación</h2>
+        <p>
+            ¿Está seguro de que desea eliminar este interno?
+        </p>
+    </div>
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <p>
+                <strong>Nombre:</strong>
+                @Model.NombreCompleto
+            </p>
+
+            <p>
+                <strong>Fecha de nacimiento:</strong>
+                @Model.FechaNacimiento?.ToString("dd/MM/yyyy")
+            </p>
+
+            <p>
+                <strong>Sexo:</strong>
+                @Model.Sexo
+            </p>
+
+            <p>
+                <strong>Familiar responsable:</strong>
+                @Model.FamiliarResponsable
+            </p>
+
+        </div>
+
+    </div>
+
+    <form asp-action="Eliminar" method="post">
+
+        <input asp-for="Id" type="hidden" />
+
+        <button type="submit"
+                class="btn btn-danger">
+            Sí, eliminar
+        </button>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

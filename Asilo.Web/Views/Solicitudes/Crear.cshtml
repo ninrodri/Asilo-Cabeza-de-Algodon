@@ -1,0 +1,67 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Asilo.Web.Models.SolicitudMedica
+
+@{
+    ViewData["Title"] = "Nueva Solicitud Médica";
+}
+
+<div class="container mt-4">
+
+    <h1>Nueva Solicitud Médica</h1>
+
+    <p>
+        Ingrese los datos necesarios para referir al paciente
+        con un médico especialista.
+    </p>
+
+    <form asp-action="Crear" method="post">
+
+        <div class="mb-3">
+            <label asp-for="Paciente" class="form-label"></label>
+            <input asp-for="Paciente" class="form-control" />
+            <span asp-validation-for="Paciente" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Familiar" class="form-label"></label>
+            <input asp-for="Familiar" class="form-control" />
+            <span asp-validation-for="Familiar" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CorreoFamiliar" class="form-label"></label>
+            <input asp-for="CorreoFamiliar" class="form-control" />
+            <span asp-validation-for="CorreoFamiliar" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MedicoReferido" class="form-label"></label>
+            <input asp-for="MedicoReferido" class="form-control" />
+            <span asp-validation-for="MedicoReferido" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Especialidad" class="form-label"></label>
+            <input asp-for="Especialidad" class="form-control" />
+            <span asp-validation-for="Especialidad" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Motivo" class="form-label"></label>
+            <textarea asp-for="Motivo"
+                      class="form-control"
+                      rows="4"></textarea>
+            <span asp-validation-for="Motivo" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Crear solicitud
+        </button>
+
+    </form>
+
+</div>

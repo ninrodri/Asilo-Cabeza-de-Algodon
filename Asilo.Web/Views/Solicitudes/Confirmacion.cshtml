@@ -1,0 +1,65 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Asilo.Web.Models.SolicitudMedica
+
+@{
+    ViewData["Title"] = "Solicitud registrada";
+}
+
+<div class="container mt-4">
+
+    <div class="alert alert-success">
+        <h2>Solicitud registrada correctamente</h2>
+
+        <p>
+            La solicitud médica del paciente fue procesada.
+        </p>
+    </div>
+
+    <div class="alert alert-info mt-3">
+        <strong>Notificación enviada correctamente.</strong>
+        <p class="mb-0">
+            El familiar fue notificado sobre la solicitud médica y la referencia realizada.
+        </p>
+    </div>
+
+    <h4>Información registrada</h4>
+
+    <p>
+        <strong>Paciente:</strong>
+        @Model.Paciente
+    </p>
+
+    <p>
+        <strong>Familiar:</strong>
+        @Model.Familiar
+    </p>
+
+    <p>
+        <strong>Correo:</strong>
+        @Model.CorreoFamiliar
+    </p>
+
+    <p>
+        <strong>Médico:</strong>
+        @Model.MedicoReferido
+    </p>
+
+    <p>
+        <strong>Especialidad:</strong>
+        @Model.Especialidad
+    </p>
+
+    <p>
+        <strong>Motivo:</strong>
+        @Model.Motivo
+    </p>
+
+    <a asp-action="Crear" class="btn btn-primary">
+        Crear otra solicitud
+    </a>
+
+</div>

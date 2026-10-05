@@ -1,0 +1,15 @@
+@Asilo_Notificaciones_Api_HostAddress = http://localhost:5240
+
+POST {{Asilo_Notificaciones_Api_HostAddress}}/api/notificaciones
+Content-Type: application/json
+
+{
+  "paciente": "Carlos Lopez",
+  "familiar": "Ana Lopez",
+  "correoFamiliar": "ana@gmail.com",
+  "medicoReferido": "Dra. Maria Perez",
+  "especialidad": "Cardiologia",
+  "motivo": "Presion arterial elevada"
+}
+    
+###

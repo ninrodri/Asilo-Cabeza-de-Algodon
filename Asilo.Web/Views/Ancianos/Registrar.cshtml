@@ -1,0 +1,285 @@
+﻿@model Asilo.Web.Models.Anciano
+
+@{
+    ViewData["Title"] = "Registro de nuevo interno";
+}
+
+<div class="container mt-4 mb-5">
+
+    <div class="mb-4">
+        <h1>Registro de nuevo interno</h1>
+        <p class="text-muted">
+            Complete la información del nuevo residente del asilo.
+            Los campos marcados con * son obligatorios.
+        </p>
+    </div>
+
+    <form asp-action="Registrar" method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3">
+        </div>
+
+        <!-- DATOS PERSONALES -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">Datos personales</h4>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-7 mb-3">
+                        <label asp-for="NombreCompleto"
+                               class="form-label">
+                            Nombre completo *
+                        </label>
+
+                        <input asp-for="NombreCompleto"
+                               class="form-control"
+                               placeholder="Ej. Ana María López Pérez" />
+
+                        <span asp-validation-for="NombreCompleto"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="FechaNacimiento"
+                               class="form-label">
+                            Fecha de nacimiento *
+                        </label>
+
+                        <input asp-for="FechaNacimiento"
+                               class="form-control" />
+
+                        <span asp-validation-for="FechaNacimiento"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-5 mb-3">
+                        <label asp-for="Sexo"
+                               class="form-label">
+                            Sexo *
+                        </label>
+
+                        <select asp-for="Sexo"
+                                class="form-select">
+
+                            <option value="">
+                                Seleccione una opción
+                            </option>
+
+                            <option value="Femenino">
+                                Femenino
+                            </option>
+
+                            <option value="Masculino">
+                                Masculino
+                            </option>
+
+                            <option value="Otro">
+                                Otro
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="Sexo"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DATOS DE INGRESO -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0">Datos de ingreso</h4>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label asp-for="FechaIngreso"
+                               class="form-label">
+                            Fecha de ingreso *
+                        </label>
+
+                        <input asp-for="FechaIngreso"
+                               class="form-control" />
+
+                        <span asp-validation-for="FechaIngreso"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+
+                        <label asp-for="MotivoIngreso"
+                               class="form-label">
+                            Motivo de ingreso *
+                        </label>
+
+                        <textarea asp-for="MotivoIngreso"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Describa brevemente el motivo de ingreso">
+                        </textarea>
+
+                        <span asp-validation-for="MotivoIngreso"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- FAMILIAR RESPONSABLE -->
+        <div class="card mb-4">
+
+            <div class="card-header">
+                <h4 class="mb-0">Familiar responsable</h4>
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+
+                    <label asp-for="FamiliarResponsable"
+                           class="form-label">
+                        Nombre del familiar *
+                    </label>
+
+                    <input asp-for="FamiliarResponsable"
+                           class="form-control"
+                           placeholder="Nombre completo del familiar responsable" />
+
+                    <span asp-validation-for="FamiliarResponsable"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-5 mb-3">
+
+                        <label asp-for="TelefonoFamiliar"
+                               class="form-label">
+                            Teléfono *
+                        </label>
+
+                        <input asp-for="TelefonoFamiliar"
+                               class="form-control"
+                               placeholder="Ej. 5555-1234" />
+
+                        <span asp-validation-for="TelefonoFamiliar"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="col-md-7 mb-3">
+
+                        <label asp-for="CorreoFamiliar"
+                               class="form-label">
+                            Correo electrónico
+                        </label>
+
+                        <input asp-for="CorreoFamiliar"
+                               class="form-control"
+                               placeholder="ejemplo@correo.com" />
+
+                        <span asp-validation-for="CorreoFamiliar"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- INFORMACIÓN MÉDICA -->
+        <div class="card mb-4">
+
+            <div class="card-header">
+                <h4 class="mb-0">Información médica</h4>
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+
+                    <label asp-for="Padecimientos"
+                           class="form-label">
+                        Padecimientos
+                    </label>
+
+                    <textarea asp-for="Padecimientos"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Indique padecimientos o enfermedades conocidas">
+                    </textarea>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="MedicamentosActuales"
+                           class="form-label">
+                        Medicamentos actuales
+                    </label>
+
+                    <textarea asp-for="MedicamentosActuales"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Indique medicamentos que utiliza actualmente">
+                    </textarea>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="d-flex justify-content-end gap-2">
+
+            <button type="reset"
+                    class="btn btn-outline-secondary">
+                Limpiar
+            </button>
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Registrar interno
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

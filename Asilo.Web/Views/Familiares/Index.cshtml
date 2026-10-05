@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Asilo.Web.Models.Familiar>
+
+@{
+    ViewData["Title"] = "Familiares";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Familiares registrados</h1>
+
+            <p class="text-muted">
+                Gestión de familiares responsables de los internos.
+            </p>
+        </div>
+
+        <a asp-action="Registrar"
+           class="btn btn-primary">
+            Registrar familiar
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Parentesco</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Interno</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var familiar in Model)
+                        {
+                            <tr>
+                                <td>@familiar.Id</td>
+                                <td>@familiar.NombreCompleto</td>
+                                <td>@familiar.Parentesco</td>
+                                <td>@familiar.Telefono</td>
+                                <td>@familiar.Correo</td>
+                                <td>@familiar.Paciente?.NombreCompleto</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

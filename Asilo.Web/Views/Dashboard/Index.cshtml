@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Panel principal";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h1>Panel principal</h1>
+
+        <p class="text-muted">
+            Sistema de Administración del Asilo Cabeza de Algodón
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        @if (User.IsInRole("Administrador") || User.IsInRole("Personal administrativo"))
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Internos</h4>
+
+                        <p class="text-muted">
+                            Registro y administración de residentes.
+                        </p>
+
+                        <a asp-controller="Ancianos"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            Administrar internos
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("Administrador") ||
+     User.IsInRole("Personal administrativo"))
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Familiares</h4>
+
+                        <p class="text-muted">
+                            Gestión de familiares responsables.
+                        </p>
+
+                        <a asp-controller="Familiares"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            Administrar familiares
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("Administrador") ||
+      User.IsInRole("Médico general") ||
+      User.IsInRole("Médico especialista") ||
+      User.IsInRole("Enfermero"))
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Ficha médica</h4>
+
+                        <p class="text-muted">
+                            Información médica de los internos.
+                        </p>
+
+                        <button class="btn btn-secondary" disabled>
+                            Próximamente
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+
+        @if (User.IsInRole("Administrador") ||
+                         User.IsInRole("Médico general") ||
+                         User.IsInRole("Médico especialista"))
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Solicitudes médicas</h4>
+
+                        <p class="text-muted">
+                            Referencias y solicitudes a especialistas.
+                        </p>
+
+                        <button class="btn btn-secondary" disabled>
+                            Próximamente
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("Administrador") || User.IsInRole("Laboratorio"))
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Laboratorio</h4>
+
+                        <p class="text-muted">
+                            Exámenes y resultados.
+                        </p>
+
+                        <button class="btn btn-secondary" disabled>
+                            Próximamente
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("Administrador") || User.IsInRole("Farmacia"))
+        {
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+
+                        <h4>Farmacia</h4>
+
+                        <p class="text-muted">
+                            Medicamentos y recetas.
+                        </p>
+
+                        <button class="btn btn-secondary" disabled>
+                            Próximamente
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+</div>

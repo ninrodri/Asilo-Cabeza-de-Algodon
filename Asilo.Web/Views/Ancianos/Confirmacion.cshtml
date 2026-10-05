@@ -1,0 +1,56 @@
+﻿@model Asilo.Web.Models.Anciano
+
+@{
+    ViewData["Title"] = "Registro completado";
+}
+
+<div class="container mt-4">
+
+    <div class="alert alert-success">
+
+        <h2>Anciano registrado correctamente</h2>
+
+        <p>
+            La información del nuevo interno fue procesada correctamente.
+        </p>
+
+    </div>
+
+    <h4>Información registrada</h4>
+
+    <p>
+        <strong>Nombre:</strong>
+        @Model.NombreCompleto
+    </p>
+
+    <p>
+        <strong>Fecha de nacimiento:</strong>
+        @Model.FechaNacimiento?.ToString("dd/MM/yyyy")
+    </p>
+
+    <p>
+        <strong>Sexo:</strong>
+        @Model.Sexo
+    </p>
+
+    <p>
+        <strong>Fecha de ingreso:</strong>
+        @Model.FechaIngreso?.ToString("dd/MM/yyyy")
+    </p>
+
+    <p>
+        <strong>Familiar responsable:</strong>
+        @Model.FamiliarResponsable
+    </p>
+
+    <p>
+        <strong>Teléfono:</strong>
+        @Model.TelefonoFamiliar
+    </p>
+    
+    <a asp-action="Registrar"
+       class="btn btn-primary">
+        Registrar otro interno
+    </a>
+
+</div>

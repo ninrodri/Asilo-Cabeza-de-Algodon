@@ -1,0 +1,92 @@
+﻿@model Asilo.Web.Models.Anciano
+
+@{
+    ViewData["Title"] = "Editar interno";
+}
+
+<div class="container mt-4">
+
+    <h1>Editar interno</h1>
+
+    <p class="text-muted">
+        Modifique la información necesaria del residente.
+    </p>
+
+    <form asp-action="Editar" method="post">
+
+        <input asp-for="Id" type="hidden" />
+
+        <div class="mb-3">
+            <label asp-for="NombreCompleto" class="form-label"></label>
+            <input asp-for="NombreCompleto" class="form-control" />
+            <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FechaNacimiento" class="form-label"></label>
+            <input asp-for="FechaNacimiento" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Sexo" class="form-label"></label>
+
+            <select asp-for="Sexo" class="form-select">
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FechaIngreso" class="form-label"></label>
+            <input asp-for="FechaIngreso" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MotivoIngreso" class="form-label"></label>
+            <textarea asp-for="MotivoIngreso"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FamiliarResponsable" class="form-label"></label>
+            <input asp-for="FamiliarResponsable" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TelefonoFamiliar" class="form-label"></label>
+            <input asp-for="TelefonoFamiliar" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CorreoFamiliar" class="form-label"></label>
+            <input asp-for="CorreoFamiliar" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Padecimientos" class="form-label"></label>
+            <textarea asp-for="Padecimientos"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MedicamentosActuales" class="form-label"></label>
+            <textarea asp-for="MedicamentosActuales"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Guardar cambios
+        </button>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

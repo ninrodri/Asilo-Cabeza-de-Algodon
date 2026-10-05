@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Asilo.Notificaciones.Api/Asilo.Notificaciones.Api.csproj" />
+  <Project Path="Asilo.Web/Asilo.Web.csproj" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>
