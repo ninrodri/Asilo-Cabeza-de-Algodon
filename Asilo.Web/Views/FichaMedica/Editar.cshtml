@@ -1,0 +1,78 @@
+﻿@model Asilo.Web.Models.FichaMedica
+
+@{
+    ViewData["Title"] = "Editar ficha médica";
+}
+
+<div class="container mt-4">
+
+    <h2>Editar ficha médica</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong> @Model.Paciente?.NombreCompleto
+    </div>
+
+    <form asp-action="Editar" method="post">
+
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="PacienteId" />
+
+        <div class="mb-3">
+            <label asp-for="Padecimientos" class="form-label"></label>
+            <textarea asp-for="Padecimientos"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Enfermedades" class="form-label"></label>
+            <textarea asp-for="Enfermedades"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Psicopatologias" class="form-label"></label>
+            <textarea asp-for="Psicopatologias"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MedicamentosFrecuentes"
+                   class="form-label"></label>
+
+            <textarea asp-for="MedicamentosFrecuentes"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Alergias" class="form-label"></label>
+            <textarea asp-for="Alergias"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ObservacionesMedicas"
+                   class="form-label"></label>
+
+            <textarea asp-for="ObservacionesMedicas"
+                      class="form-control"
+                      rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Guardar cambios
+        </button>
+
+        <a asp-action="Ver"
+           asp-route-pacienteId="@Model.PacienteId"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

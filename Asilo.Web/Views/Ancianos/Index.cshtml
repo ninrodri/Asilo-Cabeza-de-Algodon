@@ -20,7 +20,32 @@
         </a>
     </div>
 
+    <form asp-action="Index" method="get" class="mb-3">
+
+        <div class="input-group">
+
+            <input type="text"
+                   name="buscar"
+                   value="@ViewBag.Buscar"
+                   class="form-control"
+                   placeholder="Buscar paciente por nombre..." />
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Buscar
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Limpiar
+            </a>
+
+        </div>
+
+    </form>
+
     <div class="card">
+
         <div class="card-body">
 
             <div class="table-responsive">
@@ -64,6 +89,13 @@
                                        asp-route-id="@paciente.Id"
                                        class="btn btn-danger btn-sm">
                                         Eliminar
+                                    </a>
+
+                                    <a asp-controller="FichaMedica"
+                                       asp-action="Ver"
+                                       asp-route-pacienteId="@paciente.Id"
+                                       class="btn btn-info btn-sm">
+                                        Ficha médica
                                     </a>
                                 </td>
 

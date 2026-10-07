@@ -21,6 +21,9 @@ namespace Asilo.Web.Models
 
         public int RolId { get; set; }
 
+        [Display(Name = "Especialidad")]
+        public string? Especialidad { get; set; }
+
         public Rol? Rol { get; set; }
     }
 }

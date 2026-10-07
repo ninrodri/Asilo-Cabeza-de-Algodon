@@ -17,9 +17,26 @@ namespace Asilo.Web.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
+
+        public async Task<IActionResult> Index(string? buscar)
         {
-            var pacientes = await _context.Pacientes.ToListAsync();
+            var consulta = _context.Pacientes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(buscar))
+            {
+                consulta = consulta.Where(p =>
+                    EF.Functions.Like(
+                        p.NombreCompleto,
+                        $"%{buscar}%"
+                    )
+                );
+            }
+
+            ViewBag.Buscar = buscar;
+
+            var pacientes = await consulta
+                .OrderBy(p => p.NombreCompleto)
+                .ToListAsync();
 
             return View(pacientes);
         }

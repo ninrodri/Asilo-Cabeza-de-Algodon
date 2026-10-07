@@ -29,7 +29,7 @@
                         <a asp-controller="Ancianos"
                            asp-action="Index"
                            class="btn btn-primary">
-                            Administrar internos
+                            Ver fichas médicas
                         </a>
 
                     </div>
@@ -91,18 +91,22 @@
                          User.IsInRole("Médico especialista"))
         {
             <div class="col-md-4">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100">
                     <div class="card-body">
 
-                        <h4>Solicitudes médicas</h4>
+                        <h5 class="card-title">
+                            Solicitudes médicas
+                        </h5>
 
-                        <p class="text-muted">
+                        <p class="card-text text-muted">
                             Referencias y solicitudes a especialistas.
                         </p>
 
-                        <button class="btn btn-secondary" disabled>
-                            Próximamente
-                        </button>
+                        <a asp-controller="Solicitudes"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            Ver solicitudes
+                        </a>
 
                     </div>
                 </div>

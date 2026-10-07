@@ -1,0 +1,67 @@
+﻿@model Asilo.Web.Models.FichaMedica
+
+@{
+    ViewData["Title"] = "Crear ficha médica";
+}
+
+<div class="container mt-4">
+
+    <h2>Crear ficha médica</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong> @Model.Paciente?.NombreCompleto
+    </div>
+
+    <form asp-action="Crear" method="post">
+
+        <input type="hidden" asp-for="PacienteId" />
+
+        <div class="mb-3">
+            <label asp-for="Padecimientos" class="form-label"></label>
+            <textarea asp-for="Padecimientos" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Padecimientos" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Enfermedades" class="form-label"></label>
+            <textarea asp-for="Enfermedades" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Enfermedades" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Psicopatologias" class="form-label"></label>
+            <textarea asp-for="Psicopatologias" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Psicopatologias" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MedicamentosFrecuentes" class="form-label"></label>
+            <textarea asp-for="MedicamentosFrecuentes" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="MedicamentosFrecuentes" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Alergias" class="form-label"></label>
+            <textarea asp-for="Alergias" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Alergias" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ObservacionesMedicas" class="form-label"></label>
+            <textarea asp-for="ObservacionesMedicas" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="ObservacionesMedicas" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Guardar ficha médica
+        </button>
+
+        <a asp-controller="Ancianos"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

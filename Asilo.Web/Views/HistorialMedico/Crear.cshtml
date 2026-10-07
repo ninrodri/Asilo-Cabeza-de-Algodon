@@ -1,0 +1,74 @@
+﻿@model Asilo.Web.Models.HistorialMedico
+
+@{
+    ViewData["Title"] = "Nuevo registro médico";
+}
+
+<div class="container mt-4">
+
+    <h2>Nuevo registro médico</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong> @Model.Paciente?.NombreCompleto
+    </div>
+
+    <form asp-action="Crear" method="post">
+
+        <input type="hidden" asp-for="PacienteId" />
+
+        <div class="mb-3">
+            <label asp-for="TipoRegistro" class="form-label"></label>
+
+            <select asp-for="TipoRegistro" class="form-select">
+                <option value="">Seleccione una opción</option>
+                <option value="Evaluación">Evaluación</option>
+                <option value="Seguimiento">Seguimiento</option>
+                <option value="Observación">Observación</option>
+                <option value="Consulta">Consulta</option>
+                <option value="Emergencia">Emergencia</option>
+            </select>
+
+            <span asp-validation-for="TipoRegistro"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Descripcion" class="form-label"></label>
+
+            <textarea asp-for="Descripcion"
+                      class="form-control"
+                      rows="4"></textarea>
+
+            <span asp-validation-for="Descripcion"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Observaciones" class="form-label"></label>
+
+            <textarea asp-for="Observaciones"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ProfesionalResponsable"
+                   class="form-label"></label>
+
+            <input asp-for="ProfesionalResponsable"
+                   class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Guardar registro
+        </button>
+
+        <a asp-action="Index"
+           asp-route-pacienteId="@Model.PacienteId"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

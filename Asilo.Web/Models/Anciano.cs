@@ -48,6 +48,14 @@ namespace Asilo.Web.Models
 
         public ICollection<Familiar> Familiares { get; set; }
         = new List<Familiar>();
+        public ICollection<HistorialMedico> HistorialMedico { get; set; }
+        = new List<HistorialMedico>();
+        public ICollection<SolicitudMedica> SolicitudesMedicas { get; set; }
+        = new List<SolicitudMedica>();
+        public FichaMedica? FichaMedica { get; set; }
+
+        public ICollection<VisitaMedica> VisitasMedicas { get; set; }
+        = new List<VisitaMedica>();
 
     }
 }

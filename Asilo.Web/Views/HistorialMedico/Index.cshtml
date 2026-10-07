@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Asilo.Web.Models.HistorialMedico>
+
+@{
+    ViewData["Title"] = "Historial médico";
+    var paciente = ViewBag.Paciente as Asilo.Web.Models.Anciano;
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Historial médico</h2>
+
+            <p class="text-muted">
+                Paciente: <strong>@paciente?.NombreCompleto</strong>
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Crear"
+               asp-route-pacienteId="@paciente?.Id"
+               class="btn btn-primary">
+                Nuevo registro
+            </a>
+
+            <a asp-controller="Ancianos"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Volver
+            </a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Este paciente todavía no tiene registros en su historial médico.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Observaciones</th>
+                        <th>Profesional responsable</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var registro in Model)
+                    {
+                        <tr>
+                            <td>
+                                @registro.Fecha.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @registro.TipoRegistro
+                            </td>
+
+                            <td>
+                                @registro.Descripcion
+                            </td>
+
+                            <td>
+                                @registro.Observaciones
+                            </td>
+
+                            <td>
+                                @registro.ProfesionalResponsable
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    }
+
+</div>

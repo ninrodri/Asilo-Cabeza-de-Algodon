@@ -1,0 +1,87 @@
+﻿@model Asilo.Web.Models.FichaMedica
+
+@{
+    ViewData["Title"] = "Ficha médica";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Ficha médica</h2>
+
+            <p class="text-muted">
+                Información clínica del paciente.
+            </p>
+        </div>
+
+        <div>
+        <a asp-action="Editar"
+           asp-route-id="@Model.Id"
+           class="btn btn-warning">
+            Editar ficha médica
+        </a>
+
+            <a asp-controller="HistorialMedico"
+               asp-action="Index"
+               asp-route-pacienteId="@Model.PacienteId"
+               class="btn btn-info">
+                Historial médico
+            </a>
+
+        <a asp-controller="Ancianos"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Volver
+        </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-3">
+                @Model.Paciente?.NombreCompleto
+            </h4>
+
+            <hr />
+
+            <div class="mb-3">
+                <strong>Padecimientos:</strong>
+                <p>@Model.Padecimientos</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Enfermedades:</strong>
+                <p>@Model.Enfermedades</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Psicopatologías:</strong>
+                <p>@Model.Psicopatologias</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Medicamentos frecuentes:</strong>
+                <p>@Model.MedicamentosFrecuentes</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Alergias:</strong>
+                <p>@Model.Alergias</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Observaciones médicas:</strong>
+                <p>@Model.ObservacionesMedicas</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Última actualización:</strong>
+                <p>@Model.FechaActualizacion.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+
+        </div>
+    </div>
+
+</div>

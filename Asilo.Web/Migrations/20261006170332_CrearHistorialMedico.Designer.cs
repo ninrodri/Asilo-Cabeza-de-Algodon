@@ -4,6 +4,7 @@ using Asilo.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Asilo.Web.Migrations
 {
     [DbContext(typeof(AsiloDbContext))]
-    partial class AsiloDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261006170332_CrearHistorialMedico")]
+    partial class CrearHistorialMedico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,47 +214,6 @@ namespace Asilo.Web.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Asilo.Web.Models.SolicitudMedica", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Especialidad")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Estado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FechaSolicitud")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("MedicoReferido")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Motivo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Observaciones")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PacienteId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PacienteId");
-
-                    b.ToTable("SolicitudesMedicas");
-                });
-
             modelBuilder.Entity("Asilo.Web.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -262,9 +224,6 @@ namespace Asilo.Web.Migrations
 
                     b.Property<string>("Correo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Especialidad")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Estado")
@@ -286,53 +245,6 @@ namespace Asilo.Web.Migrations
                     b.HasIndex("RolId");
 
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("Asilo.Web.Models.VisitaMedica", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Diagnostico")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("FechaVisita")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Indicaciones")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Medico")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Observaciones")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PacienteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SolicitudMedicaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Tratamiento")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PacienteId");
-
-                    b.HasIndex("SolicitudMedicaId")
-                        .IsUnique();
-
-                    b.ToTable("VisitasMedicas");
                 });
 
             modelBuilder.Entity("Asilo.Web.Models.Familiar", b =>
@@ -368,17 +280,6 @@ namespace Asilo.Web.Migrations
                     b.Navigation("Paciente");
                 });
 
-            modelBuilder.Entity("Asilo.Web.Models.SolicitudMedica", b =>
-                {
-                    b.HasOne("Asilo.Web.Models.Anciano", "Paciente")
-                        .WithMany("SolicitudesMedicas")
-                        .HasForeignKey("PacienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Paciente");
-                });
-
             modelBuilder.Entity("Asilo.Web.Models.Usuario", b =>
                 {
                     b.HasOne("Asilo.Web.Models.Rol", "Rol")
@@ -390,25 +291,6 @@ namespace Asilo.Web.Migrations
                     b.Navigation("Rol");
                 });
 
-            modelBuilder.Entity("Asilo.Web.Models.VisitaMedica", b =>
-                {
-                    b.HasOne("Asilo.Web.Models.Anciano", "Paciente")
-                        .WithMany("VisitasMedicas")
-                        .HasForeignKey("PacienteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Asilo.Web.Models.SolicitudMedica", "SolicitudMedica")
-                        .WithOne("VisitaMedica")
-                        .HasForeignKey("Asilo.Web.Models.VisitaMedica", "SolicitudMedicaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Paciente");
-
-                    b.Navigation("SolicitudMedica");
-                });
-
             modelBuilder.Entity("Asilo.Web.Models.Anciano", b =>
                 {
                     b.Navigation("Familiares");
@@ -416,20 +298,11 @@ namespace Asilo.Web.Migrations
                     b.Navigation("FichaMedica");
 
                     b.Navigation("HistorialMedico");
-
-                    b.Navigation("SolicitudesMedicas");
-
-                    b.Navigation("VisitasMedicas");
                 });
 
             modelBuilder.Entity("Asilo.Web.Models.Rol", b =>
                 {
                     b.Navigation("Usuarios");
-                });
-
-            modelBuilder.Entity("Asilo.Web.Models.SolicitudMedica", b =>
-                {
-                    b.Navigation("VisitaMedica");
                 });
 #pragma warning restore 612, 618
         }
