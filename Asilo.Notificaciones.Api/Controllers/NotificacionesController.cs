@@ -35,13 +35,19 @@ namespace Asilo.Notificaciones.Api.Controllers
 Estimado/a {notificacion.Familiar}:
 
 Se informa que el paciente {notificacion.Paciente}
-ha sido referido para atención médica.
+ha sido programado para atención médica.
 
-Médico referido:
+Médico especialista:
 {notificacion.MedicoReferido}
 
 Especialidad:
 {notificacion.Especialidad}
+
+Enfermero acompañante:
+{notificacion.Enfermero}
+
+Fecha y hora de atención:
+{notificacion.FechaAtencion?.ToString("dd/MM/yyyy HH:mm")}
 
 Motivo:
 {notificacion.Motivo}
@@ -51,7 +57,6 @@ Asilo de Ancianos Cabeza de Algodón
 "
                 };
 
-                // Destinatario dinámico
                 mensaje.To.Add(notificacion.CorreoFamiliar);
 
                 using var smtpClient = new SmtpClient(smtpServer, port)

@@ -1,0 +1,50 @@
+﻿@model Asilo.Web.Models.Receta
+
+@{
+    ViewData["Title"] = "Crear receta";
+}
+
+<div class="container mt-4">
+
+    <h2>Crear receta médica</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong>
+        @Model.Paciente?.NombreCompleto
+        <br />
+
+        <strong>Médico:</strong>
+        @Model.Medico
+    </div>
+
+    <form asp-action="Crear" method="post">
+
+        <input type="hidden" asp-for="PacienteId" />
+        <input type="hidden" asp-for="VisitaMedicaId" />
+        <input type="hidden" asp-for="Medico" />
+
+        <div class="mb-3">
+            <label asp-for="IndicacionesGenerales"
+                   class="form-label">
+            </label>
+
+            <textarea asp-for="IndicacionesGenerales"
+                      class="form-control"
+                      rows="4"
+                      placeholder="Indicaciones generales de la receta"></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Crear receta
+        </button>
+
+        <a asp-controller="Solicitudes"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

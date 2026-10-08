@@ -12,6 +12,10 @@
 
         public string Especialidad { get; set; } = "";
 
+        public string Enfermero { get; set; } = "";
+
+        public DateTime? FechaAtencion { get; set; }
+
         public string Motivo { get; set; } = "";
     }
 }

@@ -42,6 +42,25 @@ namespace Asilo.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Detalle(int id)
+        {
+            var paciente = await _context.Pacientes
+                .Include(p => p.Familiares)
+                .Include(p => p.FichaMedica)
+                .Include(p => p.HistorialMedico)
+                .Include(p => p.SolicitudesMedicas)
+                .Include(p => p.VisitasMedicas)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+            return View(paciente);
+        }
+
+
+        [HttpGet]
         public IActionResult Registrar()
         {
             return View();

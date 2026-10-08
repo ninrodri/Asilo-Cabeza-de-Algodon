@@ -1,0 +1,80 @@
+﻿@model Asilo.Web.Models.VisitaMedica
+
+@{
+    ViewData["Title"] = "Visita médica";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Visita médica</h2>
+            <p class="text-muted">
+                Detalle de la atención realizada al paciente.
+            </p>
+        </div>
+
+        <a asp-controller="Solicitudes"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Volver a solicitudes
+        </a>
+
+        <a asp-controller="Laboratorio"
+           asp-action="Crear"
+           asp-route-visitaId="@Model.Id"
+           class="btn btn-primary">
+            Solicitar examen
+        </a>
+
+        <a asp-controller="Recetas"
+           asp-action="Crear"
+           asp-route-visitaId="@Model.Id"
+           class="btn btn-success">
+            Crear receta
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="mb-3">
+                <strong>Paciente:</strong>
+                <p>@Model.Paciente?.NombreCompleto</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Fecha de visita:</strong>
+                <p>@Model.FechaVisita.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Médico:</strong>
+                <p>@Model.Medico</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Diagnóstico:</strong>
+                <p>@Model.Diagnostico</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Tratamiento:</strong>
+                <p>@Model.Tratamiento</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Indicaciones:</strong>
+                <p>@Model.Indicaciones</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Observaciones:</strong>
+                <p>@Model.Observaciones</p>
+            </div>
+
+        </div>
+    </div>
+
+</div>

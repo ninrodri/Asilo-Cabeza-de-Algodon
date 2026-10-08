@@ -1,0 +1,167 @@
+﻿@model Asilo.Web.Models.Anciano
+
+@{
+    ViewData["Title"] = "Perfil del paciente";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>@Model.NombreCompleto</h2>
+            <p class="text-muted mb-0">
+                Perfil general del paciente
+            </p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Volver a internos
+        </a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h5 class="card-title mb-3">
+                Datos generales
+            </h5>
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+                    <strong>Fecha de nacimiento</strong>
+                    <p>
+                        @Model.FechaNacimiento?.ToString("dd/MM/yyyy")
+                    </p>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <strong>Sexo</strong>
+                    <p>@Model.Sexo</p>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <strong>Fecha de ingreso</strong>
+                    <p>
+                        @Model.FechaIngreso?.ToString("dd/MM/yyyy")
+                    </p>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Motivo de ingreso</strong>
+                    <p>@Model.MotivoIngreso</p>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Familiar responsable</strong>
+                    <p>@Model.FamiliarResponsable</p>
+                </div>
+
+            </div>
+
+            <a asp-action="Editar"
+               asp-route-id="@Model.Id"
+               class="btn btn-warning">
+                Editar datos
+            </a>
+
+        </div>
+    </div>
+
+    <h4 class="mb-3">
+        Información del paciente
+    </h4>
+
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5>Ficha médica</h5>
+                    <p class="text-muted">
+                        Consulta la información clínica general.
+                    </p>
+
+                    <a asp-controller="FichaMedica"
+                       asp-action="Ver"
+                       asp-route-pacienteId="@Model.Id"
+                       class="btn btn-primary">
+                        Ver ficha médica
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5>Historial médico</h5>
+                    <p class="text-muted">
+                        Consulta evaluaciones, visitas y seguimientos.
+                    </p>
+
+                    <a asp-controller="HistorialMedico"
+                       asp-action="Index"
+                       asp-route-pacienteId="@Model.Id"
+                       class="btn btn-primary">
+                        Ver historial
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5>Familiares</h5>
+
+                    <p class="text-muted">
+                        Familiares relacionados con el paciente.
+                    </p>
+
+                    <p>
+                        <strong>Registrados:</strong>
+                        @Model.Familiares.Count
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5>Solicitudes médicas</h5>
+
+                    <p class="text-muted">
+                        Referencias realizadas para este paciente.
+                    </p>
+
+                    <p>
+                        <strong>Total:</strong>
+                        @Model.SolicitudesMedicas.Count
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5>Visitas médicas</h5>
+
+                    <p class="text-muted">
+                        Atenciones médicas registradas.
+                    </p>
+
+                    <p>
+                        <strong>Total:</strong>
+                        @Model.VisitasMedicas.Count
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

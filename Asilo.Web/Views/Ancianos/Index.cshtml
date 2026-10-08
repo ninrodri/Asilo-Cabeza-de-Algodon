@@ -8,9 +8,9 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1>Internos registrados</h1>
-            <p class="text-muted">
-                Consulta de residentes registrados en el asilo.
+            <h2 class="mb-1">Internos registrados</h2>
+            <p class="text-muted mb-0">
+                Consulta y gestión de los pacientes registrados en el asilo.
             </p>
         </div>
 
@@ -20,94 +20,137 @@
         </a>
     </div>
 
-    <form asp-action="Index" method="get" class="mb-3">
-
-        <div class="input-group">
-
-            <input type="text"
-                   name="buscar"
-                   value="@ViewBag.Buscar"
-                   class="form-control"
-                   placeholder="Buscar paciente por nombre..." />
-
-            <button type="submit"
-                    class="btn btn-primary">
-                Buscar
-            </button>
-
-            <a asp-action="Index"
-               class="btn btn-secondary">
-                Limpiar
-            </a>
-
-        </div>
-
-    </form>
-
-    <div class="card">
+    <div class="card shadow-sm">
 
         <div class="card-body">
 
-            <div class="table-responsive">
+            <form asp-action="Index"
+                  method="get"
+                  class="mb-4">
 
-                <table class="table table-striped table-hover">
+                <div class="input-group">
 
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Fecha de nacimiento</th>
-                            <th>Sexo</th>
-                            <th>Fecha de ingreso</th>
-                            <th>Familiar responsable</th>
-                            <th>Teléfono</th>
-                            <th>Acciones</th>
-                        </tr>
+                    <input type="text"
+                           name="buscar"
+                           value="@ViewBag.Buscar"
+                           class="form-control"
+                           placeholder="Buscar paciente por nombre..." />
 
-                    </thead>
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Buscar
+                    </button>
 
-                    <tbody>
-                        @foreach (var paciente in Model)
-                        {
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </form>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info mb-0">
+                    No se encontraron pacientes registrados.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
                             <tr>
-                                <td>@paciente.Id</td>
-                                <td>@paciente.NombreCompleto</td>
-                                <td>@paciente.FechaNacimiento?.ToString("dd/MM/yyyy")</td>
-                                <td>@paciente.Sexo</td>
-                                <td>@paciente.FechaIngreso?.ToString("dd/MM/yyyy")</td>
-                                <td>@paciente.FamiliarResponsable</td>
-                                <td>@paciente.TelefonoFamiliar</td>
-
-                                <td>
-                                    <a asp-action="Editar"
-                                       asp-route-id="@paciente.Id"
-                                       class="btn btn-warning btn-sm">
-                                        Editar
-                                    </a>
-
-                                    <a asp-action="Eliminar"
-                                       asp-route-id="@paciente.Id"
-                                       class="btn btn-danger btn-sm">
-                                        Eliminar
-                                    </a>
-
-                                    <a asp-controller="FichaMedica"
-                                       asp-action="Ver"
-                                       asp-route-pacienteId="@paciente.Id"
-                                       class="btn btn-info btn-sm">
-                                        Ficha médica
-                                    </a>
-                                </td>
-
+                                <th>Paciente</th>
+                                <th>Fecha de nacimiento</th>
+                                <th>Sexo</th>
+                                <th>Familiar responsable</th>
+                                <th>Fecha de ingreso</th>
+                                <th>Estado</th>
                             </tr>
-                        }
-                    </tbody>
+                        </thead>
 
-                </table>
+                        <tbody>
 
-            </div>
+                            @foreach (var paciente in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <div class="d-flex align-items-center">
+
+                                            <div class="me-3">
+
+                                                <div class="rounded-circle bg-light border
+                                                    d-flex align-items-center justify-content-center"
+                                                     style="width: 42px; height: 42px;">
+
+                                                    <span class="fw-bold text-primary">
+                                                        @(string.IsNullOrWhiteSpace(paciente.NombreCompleto)
+                                                            ? "?"
+                                                            : paciente.NombreCompleto.Substring(0, 1).ToUpper())
+                                                    </span>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div>
+
+                                                <a asp-action="Detalle"
+                                                   asp-route-id="@paciente.Id"
+                                                   class="fw-semibold text-decoration-none">
+
+                                                    @paciente.NombreCompleto
+
+                                                </a>
+
+                                                <div class="text-muted small">
+                                                    ID: @paciente.Id
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @paciente.FechaNacimiento?.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td>
+                                        @paciente.Sexo
+                                    </td>
+
+                                    <td>
+                                        @paciente.FamiliarResponsable
+                                    </td>
+
+                                    <td>
+                                        @paciente.FechaIngreso?.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
 
         </div>
+
     </div>
 
 </div>

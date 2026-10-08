@@ -39,5 +39,8 @@ namespace Asilo.Web.Models
 
         [Display(Name = "Observaciones")]
         public string Observaciones { get; set; } = "";
+        public ICollection<ExamenLaboratorio> ExamenesLaboratorio { get; set; }
+         = new List<ExamenLaboratorio>();
+        public Receta? Receta { get; set; }
     }
 }

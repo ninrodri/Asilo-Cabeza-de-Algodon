@@ -56,6 +56,10 @@ namespace Asilo.Web.Models
 
         public ICollection<VisitaMedica> VisitasMedicas { get; set; }
         = new List<VisitaMedica>();
+        public ICollection<ExamenLaboratorio> ExamenesLaboratorio { get; set; }
+        = new List<ExamenLaboratorio>();
+        public ICollection<Receta> Recetas { get; set; }
+        = new List<Receta>();
 
     }
 }

@@ -19,9 +19,21 @@ namespace Asilo.Web.Services
                 Paciente = solicitud.Paciente?.NombreCompleto ?? "",
                 Familiar = solicitud.Familiar,
                 CorreoFamiliar = solicitud.CorreoFamiliar,
-                MedicoReferido = solicitud.MedicoReferido,
-                Especialidad = solicitud.Especialidad,
-                Motivo = solicitud.Motivo
+
+                MedicoReferido =
+                    solicitud.MedicoEspecialista?.NombreUsuario ?? "",
+
+                Especialidad =
+                    solicitud.Especialidad ?? "",
+
+                Enfermero =
+                    solicitud.Enfermero?.NombreUsuario ?? "",
+
+                FechaAtencion =
+                    solicitud.FechaAtencion,
+
+                Motivo =
+                    solicitud.Motivo
             };
 
             var respuesta = await _httpClient.PostAsJsonAsync(

@@ -1,0 +1,71 @@
+﻿@model Asilo.Web.Models.VisitaMedica
+
+@{
+    ViewData["Title"] = "Registrar visita médica";
+}
+
+<div class="container mt-4">
+
+    <h2>Registrar visita médica</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong> @Model.Paciente?.NombreCompleto
+    </div>
+
+    <form asp-action="Crear" method="post">
+
+        <input type="hidden" asp-for="SolicitudMedicaId" />
+        <input type="hidden" asp-for="PacienteId" />
+
+        <div class="mb-3">
+            <label asp-for="Medico" class="form-label"></label>
+            <input asp-for="Medico"
+                   class="form-control"
+                   readonly />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Diagnostico" class="form-label"></label>
+            <textarea asp-for="Diagnostico"
+                      class="form-control"
+                      rows="4"></textarea>
+
+            <span asp-validation-for="Diagnostico"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Tratamiento" class="form-label"></label>
+            <textarea asp-for="Tratamiento"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Indicaciones" class="form-label"></label>
+            <textarea asp-for="Indicaciones"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Observaciones" class="form-label"></label>
+            <textarea asp-for="Observaciones"
+                      class="form-control"
+                      rows="3"></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Guardar visita médica
+        </button>
+
+        <a asp-controller="Solicitudes"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

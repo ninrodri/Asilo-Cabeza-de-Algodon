@@ -1,0 +1,105 @@
+﻿@model IEnumerable<Asilo.Web.Models.ExamenLaboratorio>
+
+@{
+    ViewData["Title"] = "Laboratorio";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Laboratorio</h2>
+            <p class="text-muted">
+                Consulta y seguimiento de exámenes solicitados.
+            </p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No hay exámenes de laboratorio registrados.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Examen</th>
+                        <th>Estado</th>
+                        <th>Resultado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var examen in Model)
+                    {
+                        <tr>
+                            <td>
+                                @examen.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @examen.Paciente?.NombreCompleto
+                            </td>
+
+                            <td>
+                                @examen.NombreExamen
+                            </td>
+
+                            <td>
+                                @examen.Estado
+                            </td>
+
+                            <td>
+                                @if (string.IsNullOrWhiteSpace(examen.Resultado))
+                                {
+                                    <span class="text-muted">
+                                        Sin resultado
+                                    </span>
+                                }
+                                else
+                                {
+                                    var resumen = examen.Resultado.Length > 35
+                                        ? examen.Resultado.Substring(0, 35) + "..."
+                                        : examen.Resultado;
+
+                                    @resumen
+                                }
+                            </td>
+
+                            <td>
+                                @if (examen.Estado != "Completado")
+                                {
+                                    <a asp-action="Resultado"
+                                       asp-route-id="@examen.Id"
+                                       class="btn btn-primary btn-sm">
+                                        Registrar resultado
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="VerResultado"
+                                       asp-route-id="@examen.Id"
+                                       class="btn btn-outline-secondary btn-sm">
+                                        Ver resultado
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>

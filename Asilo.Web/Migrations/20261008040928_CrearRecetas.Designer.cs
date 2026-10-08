@@ -4,6 +4,7 @@ using Asilo.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Asilo.Web.Migrations
 {
     [DbContext(typeof(AsiloDbContext))]
-    partial class AsiloDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261008040928_CrearRecetas")]
+    partial class CrearRecetas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -341,24 +344,20 @@ namespace Asilo.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("EnfermeroId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Especialidad")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("FechaAtencion")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("FechaSolicitud")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MedicoEspecialistaId")
-                        .HasColumnType("int");
+                    b.Property<string>("MedicoReferido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Motivo")
                         .IsRequired()
@@ -372,10 +371,6 @@ namespace Asilo.Web.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EnfermeroId");
-
-                    b.HasIndex("MedicoEspecialistaId");
 
                     b.HasIndex("PacienteId");
 
@@ -549,23 +544,11 @@ namespace Asilo.Web.Migrations
 
             modelBuilder.Entity("Asilo.Web.Models.SolicitudMedica", b =>
                 {
-                    b.HasOne("Asilo.Web.Models.Usuario", "Enfermero")
-                        .WithMany()
-                        .HasForeignKey("EnfermeroId");
-
-                    b.HasOne("Asilo.Web.Models.Usuario", "MedicoEspecialista")
-                        .WithMany()
-                        .HasForeignKey("MedicoEspecialistaId");
-
                     b.HasOne("Asilo.Web.Models.Anciano", "Paciente")
                         .WithMany("SolicitudesMedicas")
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Enfermero");
-
-                    b.Navigation("MedicoEspecialista");
 
                     b.Navigation("Paciente");
                 });

@@ -66,20 +66,20 @@
       User.IsInRole("Médico especialista") ||
       User.IsInRole("Enfermero"))
         {
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
+                        <h5 class="card-title">Fundación</h5>
 
-                        <h4>Ficha médica</h4>
-
-                        <p class="text-muted">
-                            Información médica de los internos.
+                        <p class="card-text text-muted">
+                            Asignación de especialistas, enfermeros y horarios de atención.
                         </p>
 
-                        <button class="btn btn-secondary" disabled>
-                            Próximamente
-                        </button>
-
+                        <a asp-controller="Fundacion"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            Gestionar solicitudes
+                        </a>
                     </div>
                 </div>
             </div>
@@ -146,9 +146,11 @@
                             Medicamentos y recetas.
                         </p>
 
-                        <button class="btn btn-secondary" disabled>
-                            Próximamente
-                        </button>
+                        <a asp-controller="Farmacia"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            Ver farmacia
+                        </a>
 
                     </div>
                 </div>

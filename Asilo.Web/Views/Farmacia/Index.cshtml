@@ -1,0 +1,125 @@
+﻿@model IEnumerable<Asilo.Web.Models.Receta>
+
+@{
+    ViewData["Title"] = "Farmacia";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Farmacia</h2>
+            <p class="text-muted">
+                Consulta y entrega de medicamentos recetados.
+            </p>
+        </div>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    @if (TempData["Advertencia"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Advertencia"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No hay recetas registradas.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Médico</th>
+                        <th>Medicamentos</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var receta in Model)
+                    {
+                        <tr>
+                            <td>
+                                @receta.FechaReceta.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @receta.Paciente?.NombreCompleto
+                            </td>
+
+                            <td>
+                                @receta.Medico
+                            </td>
+
+                            <td>
+                                @receta.Detalles.Count
+                            </td>
+
+                            <td>
+                                @if (receta.Estado == "Entregada")
+                                {
+                                    <span class="badge bg-success">
+                                        Entregada
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        Pendiente
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                <a asp-action="Detalle"
+                                   asp-route-id="@receta.Id"
+                                   class="btn btn-info btn-sm">
+                                    Ver receta
+                                </a>
+
+                                @if (receta.Estado != "Entregada")
+                                {
+                                    <form asp-action="Entregar"
+                                          method="post"
+                                          class="d-inline">
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@receta.Id" />
+
+                                        <button type="submit"
+                                                class="btn btn-success btn-sm">
+                                            Marcar entregada
+                                        </button>
+
+                                    </form>
+                                }
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>

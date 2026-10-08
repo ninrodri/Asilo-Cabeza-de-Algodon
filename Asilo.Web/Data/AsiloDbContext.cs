@@ -20,6 +20,9 @@ namespace Asilo.Web.Data
         public DbSet<SolicitudMedica> SolicitudesMedicas { get; set; }
 
         public DbSet<VisitaMedica> VisitasMedicas { get; set; }
+        public DbSet<ExamenLaboratorio> ExamenesLaboratorio { get; set; }
+        public DbSet<Receta> Recetas { get; set; }
+        public DbSet<DetalleReceta> DetallesReceta { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +57,36 @@ namespace Asilo.Web.Data
                 .WithMany(p => p.VisitasMedicas)
                 .HasForeignKey(v => v.PacienteId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ExamenLaboratorio>()
+                .HasOne(e => e.Paciente)
+                .WithMany(p => p.ExamenesLaboratorio)
+                .HasForeignKey(e => e.PacienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ExamenLaboratorio>()
+                .HasOne(e => e.VisitaMedica)
+                .WithMany(v => v.ExamenesLaboratorio)
+                .HasForeignKey(e => e.VisitaMedicaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Receta>()
+                .HasOne(r => r.Paciente)
+                .WithMany(p => p.Recetas)
+                .HasForeignKey(r => r.PacienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Receta>()
+                .HasOne(r => r.VisitaMedica)
+                .WithOne(v => v.Receta)
+                .HasForeignKey<Receta>(r => r.VisitaMedicaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DetalleReceta>()
+                .HasOne(d => d.Receta)
+                .WithMany(r => r.Detalles)
+                .HasForeignKey(d => d.RecetaId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

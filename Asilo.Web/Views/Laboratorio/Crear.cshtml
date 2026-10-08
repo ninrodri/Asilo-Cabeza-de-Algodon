@@ -1,0 +1,55 @@
+﻿@model Asilo.Web.Models.ExamenLaboratorio
+
+@{
+    ViewData["Title"] = "Solicitar examen de laboratorio";
+}
+
+<div class="container mt-4">
+
+    <h2>Solicitar examen de laboratorio</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong> @Model.Paciente?.NombreCompleto
+    </div>
+
+    <form asp-action="Crear" method="post">
+
+        <input type="hidden" asp-for="PacienteId" />
+        <input type="hidden" asp-for="VisitaMedicaId" />
+
+        <div class="mb-3">
+            <label asp-for="NombreExamen"
+                   class="form-label"></label>
+
+            <input asp-for="NombreExamen"
+                   class="form-control"
+                   placeholder="Ej. Hemograma completo" />
+
+            <span asp-validation-for="NombreExamen"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Observaciones"
+                   class="form-label"></label>
+
+            <textarea asp-for="Observaciones"
+                      class="form-control"
+                      rows="3"
+                      placeholder="Indicaciones u observaciones para laboratorio"></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Solicitar examen
+        </button>
+
+        <a asp-controller="Solicitudes"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>

@@ -54,7 +54,7 @@
                         <th>Médico</th>
                         <th>Especialidad</th>
                         <th>Motivo</th>
-                        <th>Estado / Acciones</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
 
@@ -71,11 +71,13 @@
             </td>
 
             <td>
-                @solicitud.MedicoReferido
+                 @(solicitud.MedicoEspecialista?.NombreUsuario 
+                ?? "Pendiente de asignación")
             </td>
 
             <td>
-                @solicitud.Especialidad
+                  @(solicitud.Especialidad 
+                  ?? "Pendiente")
             </td>
 
             <td>
@@ -83,47 +85,8 @@
             </td>
 
             <td>
-                <form asp-action="CambiarEstado"
-                      method="post"
-                      class="d-flex gap-2">
+                @solicitud.Estado
 
-                    <input type="hidden"
-                           name="id"
-                           value="@solicitud.Id" />
-
-                    <select name="estado"
-                            class="form-select form-select-sm">
-
-                        @foreach (var estado in new[]
-                        {
-                            "Pendiente",
-                            "Asignada",
-                            "Atendida",
-                            "Finalizada"
-                        })
-                        {
-                            if (solicitud.Estado == estado)
-                            {
-                                <option value="@estado" selected>
-                                    @estado
-                                </option>
-                            }
-                            else
-                            {
-                                <option value="@estado">
-                                    @estado
-                                </option>
-                            }
-                        }
-
-                    </select>
-
-                    <button type="submit"
-                            class="btn btn-success btn-sm">
-                        Guardar
-                    </button>
-
-                </form>
             </td>
         </tr>
     }

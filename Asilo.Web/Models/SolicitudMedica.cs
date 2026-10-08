@@ -19,23 +19,36 @@ namespace Asilo.Web.Models
         public DateTime FechaSolicitud { get; set; } = DateTime.Now;
 
         [Required]
-        [Display(Name = "Médico referido")]
-        public string MedicoReferido { get; set; } = "";
-
-        [Required]
-        [Display(Name = "Especialidad")]
-        public string Especialidad { get; set; } = "";
-
-        [Required]
-        [Display(Name = "Motivo de la referencia")]
+        [Display(Name = "Motivo de referencia")]
         public string Motivo { get; set; } = "";
 
-        [Display(Name = "Estado")]
-        public string Estado { get; set; } = "Pendiente";
-
-        [Display(Name = "Observaciones")]
+        [Display(Name = "Observaciones del médico general")]
         public string Observaciones { get; set; } = "";
 
+        [Display(Name = "Estado")]
+        public string Estado { get; set; } = "Pendiente de Fundación";
+
+        // Datos asignados posteriormente por Fundación
+
+        [Display(Name = "Especialidad")]
+        public string? Especialidad { get; set; }
+
+        [Display(Name = "Médico especialista")]
+        public int? MedicoEspecialistaId { get; set; }
+
+        [ForeignKey("MedicoEspecialistaId")]
+        public Usuario? MedicoEspecialista { get; set; }
+
+        [Display(Name = "Enfermero acompañante")]
+        public int? EnfermeroId { get; set; }
+
+        [ForeignKey("EnfermeroId")]
+        public Usuario? Enfermero { get; set; }
+
+        [Display(Name = "Fecha y hora de atención")]
+        public DateTime? FechaAtencion { get; set; }
+
+        // Datos auxiliares para notificaciones
         [NotMapped]
         [Display(Name = "Nombre del familiar")]
         public string Familiar { get; set; } = "";
@@ -45,6 +58,5 @@ namespace Asilo.Web.Models
         public string CorreoFamiliar { get; set; } = "";
 
         public VisitaMedica? VisitaMedica { get; set; }
-
     }
 }

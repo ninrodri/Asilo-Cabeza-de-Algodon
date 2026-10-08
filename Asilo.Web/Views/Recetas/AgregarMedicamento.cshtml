@@ -1,0 +1,97 @@
+﻿@model Asilo.Web.Models.DetalleReceta
+
+@{
+    ViewData["Title"] = "Agregar medicamento";
+
+    var receta = ViewBag.Receta as Asilo.Web.Models.Receta;
+}
+
+<div class="container mt-4">
+
+    <h2>Agregar medicamento</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong>
+        @receta?.Paciente?.NombreCompleto
+        <br />
+
+        <strong>Médico:</strong>
+        @receta?.Medico
+    </div>
+
+    <form asp-action="AgregarMedicamento" method="post">
+
+        <input type="hidden"
+               asp-for="RecetaId" />
+
+        <div class="mb-3">
+            <label asp-for="Medicamento"
+                   class="form-label">
+            </label>
+
+            <input asp-for="Medicamento"
+                   class="form-control"
+                   placeholder="Ej. Omeprazol" />
+
+            <span asp-validation-for="Medicamento"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Dosis"
+                   class="form-label">
+            </label>
+
+            <input asp-for="Dosis"
+                   class="form-control"
+                   placeholder="Ej. 20 mg" />
+
+            <span asp-validation-for="Dosis"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Frecuencia"
+                   class="form-label">
+            </label>
+
+            <input asp-for="Frecuencia"
+                   class="form-control"
+                   placeholder="Ej. Cada 24 horas" />
+
+            <span asp-validation-for="Frecuencia"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Duracion"
+                   class="form-label">
+            </label>
+
+            <input asp-for="Duracion"
+                   class="form-control"
+                   placeholder="Ej. 7 días" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Indicaciones"
+                   class="form-label">
+            </label>
+
+            <textarea asp-for="Indicaciones"
+                      class="form-control"
+                      rows="3"
+                      placeholder="Ej. Tomar antes del desayuno"></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Guardar medicamento
+        </button>
+
+    </form>
+
+</div>

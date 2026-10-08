@@ -1,0 +1,146 @@
+﻿@model Asilo.Web.Models.SolicitudMedica
+
+@{
+    ViewData["Title"] = "Asignar atención";
+}
+
+<div class="container mt-4">
+
+    <h2>Asignar atención médica</h2>
+
+    <div class="alert alert-info">
+        <strong>Paciente:</strong>
+        @Model.Paciente?.NombreCompleto
+        <br />
+
+        <strong>Motivo:</strong>
+        @Model.Motivo
+    </div>
+
+    <form asp-action="Asignar" method="post">
+
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="PacienteId" />
+        <input type="hidden" asp-for="Motivo" />
+        <input type="hidden" asp-for="Observaciones" />
+
+        <div asp-validation-summary="All"
+             class="text-danger mb-3">
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MedicoEspecialistaId"
+                   class="form-label">
+                Médico especialista
+            </label>
+
+            <select asp-for="MedicoEspecialistaId"
+                    id="MedicoEspecialistaId"
+                    class="form-select">
+
+                <option value="">
+                    Seleccione un especialista
+                </option>
+
+                @foreach (var medico in ViewBag.MedicosEspecialistas)
+                {
+                    <option value="@medico.Id"
+                            data-especialidad="@medico.Especialidad">
+                        @medico.NombreUsuario
+                        @if (!string.IsNullOrWhiteSpace(medico.Especialidad))
+                        {
+                            <text> - @medico.Especialidad</text>
+                        }
+                    </option>
+                }
+
+            </select>
+
+            <span asp-validation-for="MedicoEspecialistaId"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Especialidad"
+                   class="form-label">
+            </label>
+
+            <input asp-for="Especialidad"
+                   id="Especialidad"
+                   class="form-control"
+                   readonly />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="EnfermeroId"
+                   class="form-label">
+                Enfermero acompañante
+            </label>
+
+            <select asp-for="EnfermeroId"
+                    class="form-select">
+
+                <option value="">
+                    Seleccione un enfermero
+                </option>
+
+                @foreach (var enfermero in ViewBag.Enfermeros)
+                {
+                    <option value="@enfermero.Id">
+                        @enfermero.NombreUsuario
+                    </option>
+                }
+
+            </select>
+
+            <span asp-validation-for="EnfermeroId"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FechaAtencion"
+                   class="form-label">
+                Fecha y hora de atención
+            </label>
+
+            <input asp-for="FechaAtencion"
+                   type="datetime-local"
+                   class="form-control" />
+
+            <span asp-validation-for="FechaAtencion"
+                  class="text-danger">
+            </span>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Guardar asignación
+        </button>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("MedicoEspecialistaId")
+            .addEventListener("change", function() {
+
+                const opcionSeleccionada =
+                    this.options[this.selectedIndex];
+
+                const especialidad =
+                    opcionSeleccionada.getAttribute("data-especialidad");
+
+                document.getElementById("Especialidad").value =
+                    especialidad || "";
+            });
+    </script>
+}

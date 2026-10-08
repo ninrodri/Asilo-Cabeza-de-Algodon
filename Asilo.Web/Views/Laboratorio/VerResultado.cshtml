@@ -1,0 +1,69 @@
+﻿@model Asilo.Web.Models.ExamenLaboratorio
+
+@{
+    ViewData["Title"] = "Resultado de laboratorio";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Resultado de laboratorio</h2>
+            <p class="text-muted">
+                Detalle del examen realizado.
+            </p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Volver
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <div class="mb-3">
+                <strong>Paciente:</strong>
+                <p>@Model.Paciente?.NombreCompleto</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Examen:</strong>
+                <p>@Model.NombreExamen</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Fecha de solicitud:</strong>
+                <p>@Model.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Estado:</strong>
+                <p>@Model.Estado</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Resultado:</strong>
+                <p>@Model.Resultado</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Observaciones:</strong>
+                <p>@Model.Observaciones</p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Fecha del resultado:</strong>
+
+                <p>
+                    @(Model.FechaResultado.HasValue
+                        ? Model.FechaResultado.Value.ToString("dd/MM/yyyy HH:mm")
+                        : "Sin fecha")
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
