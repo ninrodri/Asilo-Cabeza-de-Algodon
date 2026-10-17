@@ -42,5 +42,9 @@ namespace Asilo.Web.Models
         public ICollection<ExamenLaboratorio> ExamenesLaboratorio { get; set; }
          = new List<ExamenLaboratorio>();
         public Receta? Receta { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        [Display(Name = "Costo de consulta")]
+        public decimal CostoConsulta { get; set; }
     }
 }

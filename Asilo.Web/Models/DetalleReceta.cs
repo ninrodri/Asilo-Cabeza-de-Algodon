@@ -30,5 +30,23 @@ namespace Asilo.Web.Models
 
         [Display(Name = "Indicaciones")]
         public string Indicaciones { get; set; } = "";
+
+        [Display(Name = "Cantidad")]
+        public int Cantidad { get; set; } = 1;
+
+        [Column(TypeName = "decimal(10,2)")]
+        [Display(Name = "Precio unitario")]
+        public decimal PrecioUnitario { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Subtotal")]
+        public decimal Subtotal
+        {
+            get
+            {
+                return Cantidad * PrecioUnitario;
+            }
+        }
+
     }
 }

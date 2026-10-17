@@ -1,0 +1,268 @@
+﻿@{
+    ViewData["Title"] = "Manejo de Caja";
+
+    var donaciones = ViewBag.Donaciones;
+    var pagos = ViewBag.Pagos;
+    var gastos = ViewBag.Gastos;
+    var pagosFundacion = ViewBag.PagosFundacion;
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2>Manejo de Caja</h2>
+            <p class="text-muted">
+                Resumen de entradas, salidas y saldo disponible del asilo.
+            </p>
+        </div>
+
+        <a asp-controller="Home"
+           asp-action="Dashboard"
+           class="btn btn-secondary">
+            Volver al menú principal
+        </a>
+    </div>
+
+    <!-- RESUMEN PRINCIPAL -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>Total entradas</h5>
+                    <h3>
+                        Q @ViewBag.TotalEntradas.ToString("N2")
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>Total salidas</h5>
+                    <h3>
+                        Q @ViewBag.TotalSalidas.ToString("N2")
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5>Saldo disponible</h5>
+                    <h3>
+                        Q @ViewBag.SaldoDisponible.ToString("N2")
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- RESUMEN DE ENTRADAS -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4>Resumen de entradas</h4>
+
+            <p>
+                <strong>Donaciones:</strong>
+                Q @ViewBag.TotalDonaciones.ToString("N2")
+            </p>
+
+            <p>
+                <strong>Pagos recibidos:</strong>
+                Q @ViewBag.TotalPagos.ToString("N2")
+            </p>
+
+        </div>
+    </div>
+
+
+    <!-- RESUMEN DE SALIDAS -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4>Resumen de salidas</h4>
+
+            <p>
+                <strong>Gastos:</strong>
+                Q @ViewBag.TotalGastos.ToString("N2")
+            </p>
+
+            <p>
+                <strong>Pagos a Fundación:</strong>
+                Q @ViewBag.TotalPagosFundacion.ToString("N2")
+            </p>
+
+        </div>
+    </div>
+
+
+    <!-- DONACIONES -->
+    <!-- DONACIONES -->
+    <h4 class="mt-4">Donaciones</h4>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Donante</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var donacion in donaciones)
+            {
+                <tr>
+                    <td>
+                        @donacion.FechaDonacion.ToString("dd/MM/yyyy HH:mm")
+                    </td>
+
+                    <td>
+                        @donacion.NombreDonante
+                    </td>
+
+                    <td>
+                        @donacion.TipoDonante
+                    </td>
+
+                    <td>
+                        Q @donacion.Monto.ToString("N2")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <!-- PAGOS RECIBIDOS -->
+    <h4 class="mt-4">Pagos recibidos</h4>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Paciente</th>
+                <th>Método</th>
+                <th>Referencia</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var pago in pagos)
+            {
+                <tr>
+                    <td>
+                        @pago.FechaPago.ToString("dd/MM/yyyy HH:mm")
+                    </td>
+
+                    <td>
+                        @(pago.Cobro?.Paciente?.NombreCompleto ?? "No disponible")
+                    </td>
+
+                    <td>
+                        @pago.MetodoPago
+                    </td>
+
+                    <td>
+                        @pago.Referencia
+                    </td>
+
+                    <td>
+                        Q @pago.Monto.ToString("N2")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <!-- GASTOS -->
+    <h4 class="mt-4">Gastos</h4>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Descripción</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var gasto in gastos)
+            {
+                <tr>
+                    <td>
+                        @gasto.FechaGasto.ToString("dd/MM/yyyy HH:mm")
+                    </td>
+
+                    <td>
+                        @gasto.Categoria
+                    </td>
+
+                    <td>
+                        @gasto.Descripcion
+                    </td>
+
+                    <td>
+                        Q @gasto.Monto.ToString("N2")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+    <!-- PAGOS A FUNDACIÓN -->
+    <h4 class="mt-4">Pagos a Fundación</h4>
+
+    <table class="table table-striped mb-5">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Método</th>
+                <th>Referencia</th>
+                <th>Observaciones</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var pagoFundacion in pagosFundacion)
+            {
+                <tr>
+                    <td>
+                        @pagoFundacion.FechaPago.ToString("dd/MM/yyyy HH:mm")
+                    </td>
+
+                    <td>
+                        @pagoFundacion.MetodoPago
+                    </td>
+
+                    <td>
+                        @pagoFundacion.Referencia
+                    </td>
+
+                    <td>
+                        @pagoFundacion.Observaciones
+                    </td>
+
+                    <td>
+                        Q @pagoFundacion.Monto.ToString("N2")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

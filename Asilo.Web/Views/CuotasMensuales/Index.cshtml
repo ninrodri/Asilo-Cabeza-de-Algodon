@@ -1,0 +1,151 @@
+﻿@model IEnumerable<Asilo.Web.Models.CuotaMensual>
+
+@{
+    ViewData["Title"] = "Cuotas mensuales";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2>Cuotas mensuales</h2>
+            <p class="text-muted">
+                Control de cuotas mensuales pagadas por los familiares de los internos.
+            </p>
+        </div>
+
+        <a asp-controller="Home"
+           asp-action="Dashboard"
+           class="btn btn-secondary">
+            Volver al menú principal
+        </a>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    <div class="mb-3">
+        <a asp-action="Crear"
+           class="btn btn-primary">
+            Generar cuota mensual
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Mes</th>
+                        <th>Año</th>
+                        <th>Monto</th>
+                        <th>Pagado</th>
+                        <th>Saldo</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var cuota in Model)
+                    {
+                        var nombreMes = new DateTime(cuota.Anio, cuota.Mes, 1)
+                            .ToString(
+                                "MMMM",
+                                new System.Globalization.CultureInfo("es-GT")
+                            );
+
+                        decimal pagado = 0;
+
+                        if (cuota.Cobro?.Pagos != null)
+                        {
+                            pagado = cuota.Cobro.Pagos.Sum(p => p.Monto);
+                        }
+
+                        decimal saldo = cuota.Monto - pagado;
+
+                        string estado = "Pendiente";
+
+                        if (pagado >= cuota.Monto)
+                        {
+                            estado = "Pagado";
+                        }
+                        else if (pagado > 0)
+                        {
+                            estado = "Parcial";
+                        }
+
+                        <tr>
+                            <td>
+                                @cuota.Paciente?.NombreCompleto
+                            </td>
+
+                            <td>
+                                @nombreMes
+                            </td>
+
+                            <td>
+                                @cuota.Anio
+                            </td>
+
+                            <td>
+                                Q @cuota.Monto.ToString("N2")
+                            </td>
+
+                            <td>
+                                Q @pagado.ToString("N2")
+                            </td>
+
+                            <td>
+                                Q @saldo.ToString("N2")
+                            </td>
+
+                            <td>
+                                @if (estado == "Pagado")
+                                {
+                                    <span class="badge bg-success">
+                                        Pagado
+                                    </span>
+                                }
+                                else if (estado == "Parcial")
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        Parcial
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        Pendiente
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (cuota.CobroId != null)
+                                {
+                                    <a asp-controller="Cobros"
+                                       asp-action="Detalle"
+                                       asp-route-id="@cuota.CobroId"
+                                       class="btn btn-info btn-sm">
+                                        Ver cobro
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>

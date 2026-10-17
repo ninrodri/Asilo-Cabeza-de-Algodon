@@ -39,5 +39,9 @@ namespace Asilo.Web.Models
 
         [Display(Name = "Observaciones")]
         public string Observaciones { get; set; } = "";
+
+        [Column(TypeName = "decimal(10,2)")]
+        [Display(Name = "Costo del examen")]
+        public decimal Costo { get; set; }
     }
 }

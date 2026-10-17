@@ -1,4 +1,4 @@
-﻿using Asilo.Web.Models;
+using Asilo.Web.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Asilo.Web.Data
@@ -23,7 +23,14 @@ namespace Asilo.Web.Data
         public DbSet<ExamenLaboratorio> ExamenesLaboratorio { get; set; }
         public DbSet<Receta> Recetas { get; set; }
         public DbSet<DetalleReceta> DetallesReceta { get; set; }
-
+        public DbSet<Cobro> Cobros { get; set; }
+        public DbSet<DetalleCobro> DetallesCobro { get; set; }
+        public DbSet<Pago> Pagos { get; set; }
+        public DbSet<CuotaMensual> CuotasMensuales { get; set; }
+        public DbSet<Donacion> Donaciones { get; set; }
+        public DbSet<Gasto> Gastos { get; set; }
+        public DbSet<CobroVisita> CobrosVisitas { get; set; }
+        public DbSet<PagoFundacion> PagosFundacion { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -87,6 +94,56 @@ namespace Asilo.Web.Data
                 .WithMany(r => r.Detalles)
                 .HasForeignKey(d => d.RecetaId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Cobro>()
+                .HasOne(c => c.Paciente)
+                .WithMany()
+                .HasForeignKey(c => c.PacienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Cobro>()
+                .HasOne(c => c.VisitaMedica)
+                .WithMany()
+                .HasForeignKey(c => c.VisitaMedicaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DetalleCobro>()
+                .HasOne(d => d.Cobro)
+                .WithMany(c => c.Detalles)
+                .HasForeignKey(d => d.CobroId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Pago>()
+                .HasOne(p => p.Cobro)
+                .WithMany(c => c.Pagos)
+                .HasForeignKey(p => p.CobroId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CuotaMensual>()
+                .HasOne(c => c.Paciente)
+                .WithMany()
+                .HasForeignKey(c => c.PacienteId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CuotaMensual>()
+                .HasOne(c => c.Cobro)
+                .WithOne()
+                .HasForeignKey<CuotaMensual>(c => c.CobroId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<CobroVisita>()
+            .HasOne(cv => cv.Cobro)
+            .WithMany()
+            .HasForeignKey(cv => cv.CobroId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CobroVisita>()
+                .HasOne(cv => cv.VisitaMedica)
+                .WithMany()
+                .HasForeignKey(cv => cv.VisitaMedicaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

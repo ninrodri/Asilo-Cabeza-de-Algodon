@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Asilo.Web.Models.Gasto>
+
+@{
+    ViewData["Title"] = "Gastos";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Gastos</h2>
+            <p class="text-muted">
+                Registro y control de egresos realizados por el asilo.
+            </p>
+        </div>
+
+        <a asp-action="Crear"
+           class="btn btn-primary">
+            Nuevo gasto
+        </a>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No hay gastos registrados.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Categoría</th>
+                        <th>Descripción</th>
+                        <th>Proveedor</th>
+                        <th>Referencia</th>
+                        <th>Monto</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var gasto in Model)
+                    {
+                        <tr>
+                            <td>
+                                @gasto.FechaGasto.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @gasto.Categoria
+                            </td>
+
+                            <td>
+                                @gasto.Descripcion
+                            </td>
+
+                            <td>
+                                @gasto.Proveedor
+                            </td>
+
+                            <td>
+                                @gasto.Referencia
+                            </td>
+
+                            <td>
+                                Q @gasto.Monto.ToString("0.00")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>

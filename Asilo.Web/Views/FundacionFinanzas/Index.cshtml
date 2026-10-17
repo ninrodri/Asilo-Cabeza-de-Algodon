@@ -1,0 +1,104 @@
+﻿@model Asilo.Web.ViewModels.CuentaFundacionViewModel
+
+@{
+    ViewData["Title"] = "Cuenta Fundación";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2>Cuenta Fundación</h2>
+            <p class="text-muted">
+                Control del total adeudado por consultas, laboratorio y medicamentos.
+            </p>
+
+            <a asp-action="RegistrarPago"
+               class="btn btn-primary mt-2">
+                Registrar pago a Fundación
+            </a>
+        </div>
+
+        <a asp-controller="Home"
+           asp-action="Dashboard"
+           class="btn btn-secondary">
+            Volver al menú principal
+        </a>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <h4 class="mb-3">Resumen de deuda</h4>
+
+            <div class="row mb-2">
+                <div class="col-md-8">
+                    <strong>Consultas médicas</strong>
+                </div>
+                <div class="col-md-4 text-end">
+                    Q @Model.TotalConsultas.ToString("N2")
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-8">
+                    <strong>Exámenes de laboratorio</strong>
+                </div>
+                <div class="col-md-4 text-end">
+                    Q @Model.TotalLaboratorio.ToString("N2")
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <strong>Medicamentos</strong>
+                </div>
+                <div class="col-md-4 text-end">
+                    Q @Model.TotalMedicamentos.ToString("N2")
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mb-2">
+                <div class="col-md-8">
+                    <strong>Total adeudado a Fundación</strong>
+                </div>
+                <div class="col-md-4 text-end">
+                    <strong>
+                        Q @Model.TotalAdeudado.ToString("N2")
+                    </strong>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-md-8">
+                    <strong>Total pagado a Fundación</strong>
+                </div>
+                <div class="col-md-4 text-end">
+                    Q @Model.TotalPagado.ToString("N2")
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <strong>Saldo pendiente</strong>
+                </div>
+                <div class="col-md-4 text-end">
+                    <strong>
+                        Q @Model.SaldoPendiente.ToString("N2")
+                    </strong>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

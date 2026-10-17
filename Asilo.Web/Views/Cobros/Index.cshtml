@@ -1,0 +1,248 @@
+﻿@model Asilo.Web.ViewModels.CobrosIndexViewModel
+
+@{
+    ViewData["Title"] = "Cobros";
+}
+
+<div class="container mt-4 mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Cobros</h2>
+
+            <p class="text-muted mb-0">
+                Control de cobros pendientes y recibos generados.
+            </p>
+        </div>
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Volver al menú principal
+        </a>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    @if (TempData["Advertencia"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Advertencia"]
+        </div>
+    }
+
+
+    <!-- COBROS PENDIENTES -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h4 class="mb-1">
+                Cobros pendientes
+            </h4>
+
+            <p class="text-muted">
+                Cargos acumulados por interno que todavía no tienen recibo generado.
+            </p>
+
+            @if (!Model.Pendientes.Any())
+            {
+                <div class="alert alert-info mb-0">
+                    No hay cobros pendientes por generar.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-striped table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Familiar responsable</th>
+                                <th>Atenciones</th>
+                                <th>Consultas</th>
+                                <th>Laboratorio</th>
+                                <th>Medicamentos</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var pendiente in Model.Pendientes)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            @pendiente.Paciente
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        @pendiente.FamiliarResponsable
+                                    </td>
+
+                                    <td>
+                                        @pendiente.CantidadAtenciones
+                                    </td>
+
+                                    <td>
+                                        Q @pendiente.CostoConsulta.ToString("0.00")
+                                    </td>
+
+                                    <td>
+                                        Q @pendiente.CostoLaboratorio.ToString("0.00")
+                                    </td>
+
+                                    <td>
+                                        Q @pendiente.CostoMedicamentos.ToString("0.00")
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            Q @pendiente.Subtotal.ToString("0.00")
+                                        </strong>
+                                    </td>
+
+                                    <td>
+
+                                        <form asp-action="Generar"
+                                              method="post">
+
+                                            <input type="hidden"
+                                                   name="pacienteId"
+                                                   value="@pendiente.PacienteId" />
+
+                                            <input type="hidden"
+                                                   name="porcentajeDescuento"
+                                                   value="20" />
+
+                                            <button type="submit"
+                                                    class="btn btn-primary btn-sm">
+                                                Generar recibo
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- COBROS GENERADOS -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <h4 class="mb-1">
+                Cobros generados
+            </h4>
+
+            <p class="text-muted">
+                Recibos pendientes, parciales y pagados.
+            </p>
+
+            @if (!Model.Generados.Any())
+            {
+                <div class="alert alert-info mb-0">
+                    No hay cobros generados.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-striped table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Paciente</th>
+                                <th>Total</th>
+                                <th>Pagado</th>
+                                <th>Saldo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var cobro in Model.Generados)
+                            {
+                                var pagado =
+                                    cobro.Pagos.Sum(p => p.Monto);
+
+                                var saldo =
+                                    cobro.Total - pagado;
+
+                                <tr>
+
+                                    <td>
+                                        @cobro.FechaCobro.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+
+                                    <td>
+                                        @cobro.Paciente?.NombreCompleto
+                                    </td>
+
+                                    <td>
+                                        Q @cobro.Total.ToString("0.00")
+                                    </td>
+
+                                    <td>
+                                        Q @pagado.ToString("0.00")
+                                    </td>
+
+                                    <td>
+                                        Q @saldo.ToString("0.00")
+                                    </td>
+
+                                    <td>
+                                        @cobro.Estado
+                                    </td>
+
+                                    <td>
+                                        <a asp-action="Detalle"
+                                           asp-route-id="@cobro.Id"
+                                           class="btn btn-info btn-sm">
+                                            Ver detalle
+                                        </a>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
