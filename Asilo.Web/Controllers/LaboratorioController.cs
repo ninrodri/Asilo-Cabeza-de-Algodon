@@ -133,6 +133,7 @@ namespace Asilo.Web.Controllers
 
             examenExistente.Resultado = examen.Resultado;
             examenExistente.Observaciones = examen.Observaciones;
+            examenExistente.Costo = examen.Costo;
             examenExistente.FechaResultado = DateTime.Now;
             examenExistente.Estado = "Completado";
 

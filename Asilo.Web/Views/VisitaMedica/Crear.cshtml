@@ -35,25 +35,28 @@
         </div>
 
         <div class="mb-3">
-            <label asp-for="Tratamiento" class="form-label"></label>
-            <textarea asp-for="Tratamiento"
-                      class="form-control"
-                      rows="3"></textarea>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Indicaciones" class="form-label"></label>
-            <textarea asp-for="Indicaciones"
-                      class="form-control"
-                      rows="3"></textarea>
-        </div>
-
-        <div class="mb-3">
             <label asp-for="Observaciones" class="form-label"></label>
             <textarea asp-for="Observaciones"
                       class="form-control"
                       rows="3"></textarea>
         </div>
+
+        <div class="mb-3">
+            <label asp-for="CostoConsulta"
+                   class="form-label">
+            </label>
+
+            <input asp-for="CostoConsulta"
+                   type="number"
+                   min="0"
+                   step="0.01"
+                   class="form-control" />
+
+            <span asp-validation-for="CostoConsulta"
+                  class="text-danger">
+            </span>
+        </div>
+
 
         <button type="submit"
                 class="btn btn-primary">

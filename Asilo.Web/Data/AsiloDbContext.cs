@@ -1,4 +1,4 @@
-using Asilo.Web.Models;
+﻿using Asilo.Web.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Asilo.Web.Data
@@ -29,6 +29,7 @@ namespace Asilo.Web.Data
         public DbSet<CuotaMensual> CuotasMensuales { get; set; }
         public DbSet<Donacion> Donaciones { get; set; }
         public DbSet<Gasto> Gastos { get; set; }
+        public DbSet<ConsultaGeneral> ConsultasGenerales { get; set; }
         public DbSet<CobroVisita> CobrosVisitas { get; set; }
         public DbSet<PagoFundacion> PagosFundacion { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -131,6 +132,11 @@ namespace Asilo.Web.Data
                 .HasForeignKey<CuotaMensual>(c => c.CobroId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<ConsultaGeneral>()
+            .HasOne(c => c.Paciente)
+            .WithMany()
+            .HasForeignKey(c => c.PacienteId)
+            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CobroVisita>()
             .HasOne(cv => cv.Cobro)

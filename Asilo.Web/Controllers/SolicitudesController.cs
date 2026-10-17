@@ -23,6 +23,7 @@ namespace Asilo.Web.Controllers
                 .Include(s => s.Paciente)
                 .Include(s => s.MedicoEspecialista)
                 .Include(s => s.Enfermero)
+                .Include(s => s.VisitaMedica)
                 .OrderByDescending(s => s.FechaSolicitud)
                 .ToListAsync();
 
@@ -30,13 +31,36 @@ namespace Asilo.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Crear()
+        public async Task<IActionResult> Crear(
+    int? pacienteId,
+    string? especialidad,
+    string? motivo)
         {
+            if (!pacienteId.HasValue ||
+                string.IsNullOrWhiteSpace(especialidad) ||
+                string.IsNullOrWhiteSpace(motivo))
+            {
+                TempData["Aviso"] =
+                    "La solicitud médica debe generarse desde una consulta del médico general.";
+
+                return RedirectToAction(
+                    "Crear",
+                    "ConsultaGeneral"
+                );
+            }
+
             ViewBag.Pacientes = await _context.Pacientes
                 .OrderBy(p => p.NombreCompleto)
                 .ToListAsync();
 
-            return View();
+            var solicitud = new SolicitudMedica
+            {
+                PacienteId = pacienteId.Value,
+                Especialidad = especialidad,
+                Motivo = motivo
+            };
+
+            return View(solicitud);
         }
 
         [HttpPost]
@@ -52,33 +76,10 @@ namespace Asilo.Web.Controllers
                 return View(solicitud);
             }
 
-            var paciente = await _context.Pacientes
-                .FirstOrDefaultAsync(p => p.Id == solicitud.PacienteId);
-
-            if (paciente == null)
-            {
-                ModelState.AddModelError(
-                    "",
-                    "El paciente seleccionado no existe."
-                );
-
-                ViewBag.Pacientes = await _context.Pacientes
-                    .OrderBy(p => p.NombreCompleto)
-                    .ToListAsync();
-
-                return View(solicitud);
-            }
-
             solicitud.FechaSolicitud = DateTime.Now;
             solicitud.Estado = "Pendiente de Fundación";
 
-            solicitud.Especialidad = null;
-            solicitud.MedicoEspecialistaId = null;
-            solicitud.EnfermeroId = null;
-            solicitud.FechaAtencion = null;
-
             _context.SolicitudesMedicas.Add(solicitud);
-
             await _context.SaveChangesAsync();
 
             TempData["Exito"] =

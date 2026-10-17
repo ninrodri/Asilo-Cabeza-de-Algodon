@@ -9,10 +9,10 @@
     <h1>Nueva Solicitud Médica</h1>
 
     <p class="text-muted">
-        Seleccione al paciente e ingrese el motivo de referencia.
-        La Fundación asignará posteriormente al especialista,
-        al enfermero acompañante y el horario de atención.
-    </p>
+    Revise la información de la referencia médica.
+    La Fundación asignará posteriormente al especialista,
+    al enfermero acompañante y el horario de atención.
+</p>
 
     <form asp-action="Crear" method="post">
 
@@ -47,6 +47,21 @@
         </div>
 
         <div class="mb-3">
+    <label asp-for="Especialidad"
+           class="form-label">
+        Especialidad requerida
+    </label>
+
+    <input asp-for="Especialidad"
+           class="form-control"
+           readonly />
+
+    <span asp-validation-for="Especialidad"
+          class="text-danger">
+    </span>
+</div>
+
+        <div class="mb-3">
             <label asp-for="Motivo"
                    class="form-label">
             </label>
@@ -79,10 +94,10 @@
             Enviar solicitud a Fundación
         </button>
 
-        <a asp-controller="Ancianos"
-           asp-action="Index"
-           class="btn btn-secondary">
-            Cancelar
+       <a asp-controller="Dashboard"
+        asp-action="Index"
+        class="btn btn-secondary">
+        Cancelar
         </a>
 
     </form>

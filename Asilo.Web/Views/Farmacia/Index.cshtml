@@ -13,6 +13,12 @@
                 Consulta y entrega de medicamentos recetados.
             </p>
         </div>
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Volver al menú principal
+        </a>
+
     </div>
 
     @if (TempData["Exito"] != null)

@@ -1,0 +1,265 @@
+﻿@model Asilo.Web.Models.Anciano
+
+@{
+    ViewData["Title"] = "Análisis médico por paciente";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h2>Reporte de análisis médico por paciente</h2>
+
+        <p class="text-muted">
+            Consulta de ficha médica, antecedentes, historial y medicamentos
+            registrados para el paciente.
+        </p>
+    </div>
+
+    <form method="get"
+          asp-action="AnalisisMedico"
+          class="row g-3 mb-4">
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+                Paciente
+            </label>
+
+            <select name="pacienteId"
+                    class="form-select">
+
+                <option value="">
+                    Seleccione un paciente
+                </option>
+
+                @foreach (var paciente in ViewBag.Pacientes)
+                {
+                    if (ViewBag.PacienteId != null &&
+                        paciente.Id == (int)ViewBag.PacienteId)
+                    {
+                        <option value="@paciente.Id"
+                                selected>
+                            @paciente.NombreCompleto
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="@paciente.Id">
+                            @paciente.NombreCompleto
+                        </option>
+                    }
+                }
+
+            </select>
+
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Consultar
+            </button>
+
+        </div>
+
+    </form>
+
+    @if (Model != null)
+    {
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h4>
+                    @Model.NombreCompleto
+                </h4>
+
+                <p>
+                    <strong>Fecha de nacimiento:</strong>
+                    ¿@(Model.FechaNacimiento.HasValue
+                        ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy")
+                    : "No registrada")
+                </p>
+
+                <p>
+                    <strong>Motivo de ingreso:</strong>
+                    @Model.MotivoIngreso
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h4>Ficha médica</h4>
+
+                @if (Model.FichaMedica != null)
+                {
+                    <p>
+                        <strong>Padecimientos:</strong>
+                        @Model.FichaMedica.Padecimientos
+                    </p>
+
+                    <p>
+                        <strong>Enfermedades:</strong>
+                        @Model.FichaMedica.Enfermedades
+                    </p>
+
+                    <p>
+                        <strong>Psicopatologías:</strong>
+                        @Model.FichaMedica.Psicopatologias
+                    </p>
+
+                    <p>
+                        <strong>Medicamentos frecuentes:</strong>
+                        @Model.FichaMedica.MedicamentosFrecuentes
+                    </p>
+
+                    <p>
+                        <strong>Alergias:</strong>
+                        @Model.FichaMedica.Alergias
+                    </p>
+
+                    <p>
+                        <strong>Observaciones:</strong>
+                        @Model.FichaMedica.ObservacionesMedicas
+                    </p>
+                }
+                else
+                {
+                    <p class="text-muted">
+                        El paciente no tiene ficha médica registrada.
+                    </p>
+                }
+
+            </div>
+
+        </div>
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h4>Historial médico</h4>
+
+                @if (Model.HistorialMedico.Any())
+                {
+                    <div class="table-responsive">
+
+                        <table class="table table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Profesional</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var registro in Model.HistorialMedico
+                                    .OrderByDescending(h => h.Fecha))
+                                {
+                                    <tr>
+                                        <td>
+                                            @registro.Fecha.ToString("dd/MM/yyyy HH:mm")
+                                        </td>
+
+                                        <td>
+                                            @registro.TipoRegistro
+                                        </td>
+
+                                        <td>
+                                            @registro.Descripcion
+                                        </td>
+
+                                        <td>
+                                            @registro.ProfesionalResponsable
+                                        </td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">
+                        No hay historial médico registrado.
+                    </p>
+                }
+
+            </div>
+
+        </div>
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h4>Medicamentos recetados</h4>
+
+                @{
+                    var medicamentos = Model.VisitasMedicas
+                        .Where(v => v.Receta != null)
+                        .SelectMany(v => v.Receta!.Detalles)
+                        .ToList();
+                }
+
+                @if (medicamentos.Any())
+                {
+                    <div class="table-responsive">
+
+                        <table class="table table-striped">
+
+                            <thead>
+                                <tr>
+                                    <th>Medicamento</th>
+                                    <th>Dosis</th>
+                                    <th>Frecuencia</th>
+                                    <th>Duración</th>
+                                    <th>Indicaciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var medicamento in medicamentos)
+                                {
+                                    <tr>
+                                        <td>@medicamento.Medicamento</td>
+                                        <td>@medicamento.Dosis</td>
+                                        <td>@medicamento.Frecuencia</td>
+                                        <td>@medicamento.Duracion</td>
+                                        <td>@medicamento.Indicaciones</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">
+                        No hay medicamentos recetados.
+                    </p>
+                }
+
+            </div>
+
+        </div>
+    }
+
+</div>

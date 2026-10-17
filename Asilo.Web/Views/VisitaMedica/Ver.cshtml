@@ -4,77 +4,204 @@
     ViewData["Title"] = "Visita médica";
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-start mb-4">
+
         <div>
-            <h2>Visita médica</h2>
-            <p class="text-muted">
+            <h2 class="mb-1">Visita médica</h2>
+
+            <p class="text-muted mb-0">
                 Detalle de la atención realizada al paciente.
             </p>
         </div>
 
         <a asp-controller="Solicitudes"
            asp-action="Index"
-           class="btn btn-secondary">
+           class="btn btn-outline-secondary">
             Volver a solicitudes
-        </a>
-
-        <a asp-controller="Laboratorio"
-           asp-action="Crear"
-           asp-route-visitaId="@Model.Id"
-           class="btn btn-primary">
-            Solicitar examen
-        </a>
-
-        <a asp-controller="Recetas"
-           asp-action="Crear"
-           asp-route-visitaId="@Model.Id"
-           class="btn btn-success">
-            Crear receta
         </a>
 
     </div>
 
-    <div class="card shadow-sm">
+
+    <!-- Resumen del paciente -->
+    <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
 
-            <div class="mb-3">
-                <strong>Paciente:</strong>
-                <p>@Model.Paciente?.NombreCompleto</p>
-            </div>
+            <div class="row">
 
-            <div class="mb-3">
-                <strong>Fecha de visita:</strong>
-                <p>@Model.FechaVisita.ToString("dd/MM/yyyy HH:mm")</p>
-            </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <small class="text-muted d-block">
+                        Paciente
+                    </small>
 
-            <div class="mb-3">
-                <strong>Médico:</strong>
-                <p>@Model.Medico</p>
-            </div>
+                    <strong>
+                        @Model.Paciente?.NombreCompleto
+                    </strong>
+                </div>
 
-            <div class="mb-3">
-                <strong>Diagnóstico:</strong>
-                <p>@Model.Diagnostico</p>
-            </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <small class="text-muted d-block">
+                        Fecha de visita
+                    </small>
 
-            <div class="mb-3">
-                <strong>Tratamiento:</strong>
-                <p>@Model.Tratamiento</p>
-            </div>
+                    <strong>
+                        @Model.FechaVisita.ToString("dd/MM/yyyy HH:mm")
+                    </strong>
+                </div>
 
-            <div class="mb-3">
-                <strong>Indicaciones:</strong>
-                <p>@Model.Indicaciones</p>
-            </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">
+                        Médico especialista
+                    </small>
 
-            <div class="mb-3">
-                <strong>Observaciones:</strong>
-                <p>@Model.Observaciones</p>
+                    <strong>
+                        @Model.Medico
+                    </strong>
+                </div>
+
             </div>
 
         </div>
+    </div>
+
+
+    <!-- Información clínica -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="mb-4">
+                Información clínica
+            </h5>
+
+            <div class="mb-4">
+                <small class="text-muted d-block mb-1">
+                    Diagnóstico
+                </small>
+
+                <div class="border rounded p-3 bg-light">
+                    @Model.Diagnostico
+                </div>
+            </div>
+
+
+            <div>
+                <small class="text-muted d-block mb-1">
+                    Observaciones
+                </small>
+
+                <div class="border rounded p-3">
+                    @Model.Observaciones
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Acciones médicas -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="mb-1">
+                Acciones de la visita
+            </h5>
+
+            <p class="text-muted mb-3">
+                Consulte la ficha médica o continúe con estudios y tratamiento.
+            </p>
+
+            <div class="d-flex flex-wrap gap-2">
+
+                <a asp-controller="FichaMedica"
+                   asp-action="Ver"
+                   asp-route-pacienteId="@Model.PacienteId"
+                   class="btn btn-outline-secondary">
+                    Ver ficha médica
+                </a>
+
+                <a asp-controller="Laboratorio"
+                   asp-action="Crear"
+                   asp-route-visitaId="@Model.Id"
+                   class="btn btn-primary">
+                    Solicitar examen
+                </a>
+
+                <a asp-controller="Recetas"
+                   asp-action="Crear"
+                   asp-route-visitaId="@Model.Id"
+                   class="btn btn-success">
+                    Crear receta
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Facturación -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="mb-1">
+                Facturación
+            </h5>
+
+            <p class="text-muted">
+                Genere el cobro correspondiente a la atención médica.
+            </p>
+
+            <div class="mb-3">
+                <small class="text-muted d-block">
+                    Costo de consulta
+                </small>
+
+                <strong class="fs-5">
+                    Q @Model.CostoConsulta.ToString("0.00")
+                </strong>
+            </div>
+
+            <form asp-controller="Cobros"
+                  asp-action="Generar"
+                  method="post">
+
+                <input type="hidden"
+                       name="visitaId"
+                       value="@Model.Id" />
+
+                <input type="hidden"
+                       name="porcentajeDescuento"
+                       value="20" />
+
+                <button type="submit"
+                        class="btn btn-dark">
+                    Generar cobro
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Navegación -->
+    <div class="d-flex justify-content-end">
+
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Volver al menú principal
+        </a>
+
     </div>
 
 </div>

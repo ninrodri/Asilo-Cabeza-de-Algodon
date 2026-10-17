@@ -1,0 +1,248 @@
+﻿@model Asilo.Web.Models.ConsultaGeneral
+
+@{
+    ViewData["Title"] = "Consulta médica general";
+}
+
+<div class="container mt-4 mb-5">
+
+    <div class="mb-4">
+        <h2>Consulta médica general</h2>
+
+        <p class="text-muted">
+            Registre la evaluación inicial realizada por el médico general.
+        </p>
+    </div>
+
+    <form asp-action="Crear"
+          method="post">
+
+        <div asp-validation-summary="All"
+             class="text-danger mb-3">
+        </div>
+
+        <div class="mb-3">
+
+            <label asp-for="PacienteId"
+                   class="form-label">
+                Paciente
+            </label>
+
+            <select asp-for="PacienteId"
+                    class="form-select">
+
+                <option value="">
+                    Seleccione un paciente
+                </option>
+
+                @foreach (var paciente in ViewBag.Pacientes)
+                {
+                    <option value="@paciente.Id">
+                        @paciente.NombreCompleto
+                    </option>
+                }
+
+            </select>
+
+            <span asp-validation-for="PacienteId"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label asp-for="Medico"
+                   class="form-label">
+            </label>
+
+            <input asp-for="Medico"
+                   class="form-control"
+                   readonly />
+
+        </div>
+
+        <div class="mb-3">
+
+            <label asp-for="Motivo"
+                   class="form-label">
+            </label>
+
+            <textarea asp-for="Motivo"
+                      class="form-control"
+                      rows="3">
+            </textarea>
+
+            <span asp-validation-for="Motivo"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label asp-for="Diagnostico"
+                   class="form-label">
+            </label>
+
+            <textarea asp-for="Diagnostico"
+                      class="form-control"
+                      rows="3">
+            </textarea>
+
+            <span asp-validation-for="Diagnostico"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label asp-for="Observaciones"
+                   class="form-label">
+            </label>
+
+            <textarea asp-for="Observaciones"
+                      class="form-control"
+                      rows="3">
+            </textarea>
+
+        </div>
+
+        <div class="form-check mb-3">
+
+            <input asp-for="RequiereEspecialista"
+                   id="RequiereEspecialista"
+                   class="form-check-input" />
+
+            <label asp-for="RequiereEspecialista"
+                   class="form-check-label">
+            </label>
+
+        </div>
+
+        <div id="referenciaEspecialista"
+             style="display:none;">
+
+            <div class="card border-warning mb-4">
+                <div class="card-body">
+
+                    <h5 class="mb-3">
+                        Referencia a especialista
+                    </h5>
+
+                    <div class="mb-3">
+
+                        <label asp-for="EspecialidadRequerida"
+                               class="form-label">
+                        </label>
+
+                        <select asp-for="EspecialidadRequerida"
+                                class="form-select">
+
+                            <option value="">
+                                Seleccione una especialidad
+                            </option>
+
+                            <option value="Cardiología">
+                                Cardiología
+                            </option>
+
+                            <option value="Neurología">
+                                Neurología
+                            </option>
+
+                            <option value="Psiquiatría">
+                                Psiquiatría
+                            </option>
+
+                            <option value="Traumatología">
+                                Traumatología
+                            </option>
+
+                            <option value="Medicina interna">
+                                Medicina interna
+                            </option>
+
+                            <option value="Geriatría">
+                                Geriatría
+                            </option>
+
+                            <option value="Dermatología">
+                                Dermatología
+                            </option>
+
+                            <option value="Oftalmología">
+                                Oftalmología
+                            </option>
+
+                            <option value="Otra">
+                                Otra
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="MotivoReferencia"
+                               class="form-label">
+                        </label>
+
+                        <textarea asp-for="MotivoReferencia"
+                                  class="form-control"
+                                  rows="3">
+                        </textarea>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Guardar consulta
+            </button>
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts {
+
+    <script>
+        function mostrarReferencia() {
+
+            const requiere =
+                document.getElementById("RequiereEspecialista");
+
+            const seccion =
+                document.getElementById("referenciaEspecialista");
+
+            if (requiere.checked) {
+                seccion.style.display = "block";
+            }
+            else {
+                seccion.style.display = "none";
+            }
+        }
+
+        document.getElementById("RequiereEspecialista")
+            .addEventListener("change", mostrarReferencia);
+
+        mostrarReferencia();
+    </script>
+}

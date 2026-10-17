@@ -4,6 +4,14 @@
     ViewData["Title"] = "Crear ficha médica";
 }
 
+@if (TempData["Aviso"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Aviso"]
+    </div>
+}
+
+
 <div class="container mt-4">
 
     <h2>Crear ficha médica</h2>

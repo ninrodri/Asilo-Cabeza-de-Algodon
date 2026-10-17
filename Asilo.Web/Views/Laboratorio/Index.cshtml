@@ -13,6 +13,17 @@
                 Consulta y seguimiento de exámenes solicitados.
             </p>
         </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Volver al menú principal
+            </a>
+
+        </div>
+
     </div>
 
     @if (!Model.Any())
@@ -31,6 +42,7 @@
                     <tr>
                         <th>Fecha</th>
                         <th>Paciente</th>
+                        <th>Tipo de paciente</th>
                         <th>Examen</th>
                         <th>Estado</th>
                         <th>Resultado</th>
@@ -48,6 +60,12 @@
 
                             <td>
                                 @examen.Paciente?.NombreCompleto
+                            </td>
+
+                            <td>
+                                <span class="badge bg-success">
+                                    Interno del asilo
+                                </span>
                             </td>
 
                             <td>
@@ -76,11 +94,18 @@
                             </td>
 
                             <td>
+                                <a asp-controller="VisitaMedica"
+                                   asp-action="Ver"
+                                   asp-route-id="@examen.VisitaMedicaId"
+                                   class="btn btn-info btn-sm mb-1">
+                                    Ver visita
+                                </a>
+
                                 @if (examen.Estado != "Completado")
                                 {
                                     <a asp-action="Resultado"
                                        asp-route-id="@examen.Id"
-                                       class="btn btn-primary btn-sm">
+                                       class="btn btn-primary btn-sm mb-1">
                                         Registrar resultado
                                     </a>
                                 }
@@ -88,11 +113,14 @@
                                 {
                                     <a asp-action="VerResultado"
                                        asp-route-id="@examen.Id"
-                                       class="btn btn-outline-secondary btn-sm">
+                                       class="btn btn-outline-secondary btn-sm mb-1">
                                         Ver resultado
                                     </a>
                                 }
                             </td>
+
+
+
                         </tr>
                     }
                 </tbody>

@@ -1,56 +1,112 @@
 ﻿@model Asilo.Web.Models.Anciano
 
 @{
-    ViewData["Title"] = "Registro completado";
+    ViewData["Title"] = "Interno registrado";
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
 
-    <div class="alert alert-success">
+    <div class="alert alert-success shadow-sm border-0 rounded-3 mb-4">
+        <h4 class="mb-1">
+            Interno registrado correctamente
+        </h4>
 
-        <h2>Anciano registrado correctamente</h2>
-
-        <p>
-            La información del nuevo interno fue procesada correctamente.
+        <p class="mb-0">
+            La información del nuevo residente fue guardada correctamente.
         </p>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+
+        <div class="card-body p-4">
+
+            <div class="mb-4">
+                <h3 class="mb-1">
+                    @Model.NombreCompleto
+                </h3>
+
+                <span class="text-muted">
+                    Nuevo residente del asilo
+                </span>
+            </div>
+
+            <hr />
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <small class="text-muted d-block">
+                        Fecha de nacimiento
+                    </small>
+
+                    <strong>
+                        @(Model.FechaNacimiento.HasValue
+                            ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy")
+                            : "No registrada")
+                    </strong>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <small class="text-muted d-block">
+                        Sexo
+                    </small>
+
+                    <strong>
+                        @Model.Sexo
+                    </strong>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <small class="text-muted d-block">
+                        Fecha de ingreso
+                    </small>
+
+                    <strong>
+                        @(Model.FechaIngreso.HasValue
+                         ? Model.FechaIngreso.Value.ToString("dd/MM/yyyy")
+                         : "No registrada")
+                    </strong>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <small class="text-muted d-block">
+                        Familiar responsable
+                    </small>
+
+                    <strong>
+                        @Model.FamiliarResponsable
+                    </strong>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <small class="text-muted d-block">
+                        Teléfono
+                    </small>
+
+                    <strong>
+                        @Model.TelefonoFamiliar
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
-    <h4>Información registrada</h4>
+    <div class="d-flex flex-wrap gap-2 mt-4">
 
-    <p>
-        <strong>Nombre:</strong>
-        @Model.NombreCompleto
-    </p>
+        <a asp-action="Registrar"
+           class="btn btn-primary">
+            Registrar otro interno
+        </a>
 
-    <p>
-        <strong>Fecha de nacimiento:</strong>
-        @Model.FechaNacimiento?.ToString("dd/MM/yyyy")
-    </p>
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Volver al menú principal
+        </a>
 
-    <p>
-        <strong>Sexo:</strong>
-        @Model.Sexo
-    </p>
-
-    <p>
-        <strong>Fecha de ingreso:</strong>
-        @Model.FechaIngreso?.ToString("dd/MM/yyyy")
-    </p>
-
-    <p>
-        <strong>Familiar responsable:</strong>
-        @Model.FamiliarResponsable
-    </p>
-
-    <p>
-        <strong>Teléfono:</strong>
-        @Model.TelefonoFamiliar
-    </p>
-    
-    <a asp-action="Registrar"
-       class="btn btn-primary">
-        Registrar otro interno
-    </a>
+    </div>
 
 </div>

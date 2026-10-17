@@ -20,9 +20,8 @@ namespace Asilo.Web.Controllers
         public async Task<IActionResult> Crear(int solicitudId)
         {
             var solicitud = await _context.SolicitudesMedicas
-             .Include(s => s.Paciente)
-             .Include(s => s.MedicoEspecialista)
-             .FirstOrDefaultAsync(s => s.Id == solicitudId);
+                .Include(s => s.Paciente)
+                .FirstOrDefaultAsync(s => s.Id == solicitudId);
 
             if (solicitud == null)
             {
@@ -30,14 +29,24 @@ namespace Asilo.Web.Controllers
             }
 
             var visitaExistente = await _context.VisitasMedicas
-                .FirstOrDefaultAsync(v => v.SolicitudMedicaId == solicitudId);
+                .AnyAsync(v => v.SolicitudMedicaId == solicitudId);
 
-            if (visitaExistente != null)
+            if (visitaExistente)
             {
-                return RedirectToAction(
-                    "Ver",
-                    new { id = visitaExistente.Id }
-                );
+                TempData["Aviso"] =
+                    "Esta solicitud ya tiene una visita médica registrada.";
+
+                return RedirectToAction("Index", "Solicitudes");
+            }
+
+            string medico = "";
+
+            if (solicitud.MedicoEspecialistaId.HasValue)
+            {
+                medico = await _context.Usuarios
+                    .Where(u => u.Id == solicitud.MedicoEspecialistaId.Value)
+                    .Select(u => u.NombreUsuario)
+                    .FirstOrDefaultAsync() ?? "";
             }
 
             var visita = new VisitaMedica
@@ -45,8 +54,7 @@ namespace Asilo.Web.Controllers
                 SolicitudMedicaId = solicitud.Id,
                 PacienteId = solicitud.PacienteId,
                 Paciente = solicitud.Paciente,
-                Medico = solicitud.MedicoEspecialista?.NombreUsuario ?? "",
-                FechaVisita = DateTime.Now
+                Medico = medico
             };
 
             return View(visita);
@@ -56,25 +64,49 @@ namespace Asilo.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(VisitaMedica visita)
         {
-            if (!ModelState.IsValid)
-            {
-                visita.Paciente = await _context.Pacientes
-                    .FirstOrDefaultAsync(p => p.Id == visita.PacienteId);
-
-                return View(visita);
-            }
-
             var solicitud = await _context.SolicitudesMedicas
-                .FirstOrDefaultAsync(s => s.Id == visita.SolicitudMedicaId);
+                .FirstOrDefaultAsync(s =>
+                    s.Id == visita.SolicitudMedicaId);
 
             if (solicitud == null)
             {
                 return NotFound();
             }
 
+            // El médico se obtiene desde la solicitud,
+            // no desde lo que mande el navegador.
+            if (solicitud.MedicoEspecialistaId.HasValue)
+            {
+                visita.Medico = await _context.Usuarios
+                    .Where(u => u.Id == solicitud.MedicoEspecialistaId.Value)
+                    .Select(u => u.NombreUsuario)
+                    .FirstOrDefaultAsync() ?? "";
+            }
+
+            // Quitamos la validación anterior de Medico
+            // porque acabamos de asignarlo desde la BD.
+            ModelState.Remove(nameof(visita.Medico));
+
+            if (string.IsNullOrWhiteSpace(visita.Medico))
+            {
+                ModelState.AddModelError(
+                    "",
+                    "La solicitud no tiene un médico especialista asignado."
+                );
+            }
+
+            if (!ModelState.IsValid)
+            {
+                visita.Paciente = await _context.Pacientes
+                    .FirstOrDefaultAsync(p =>
+                        p.Id == visita.PacienteId);
+
+                return View(visita);
+            }
+
             var visitaExistente = await _context.VisitasMedicas
-             .FirstOrDefaultAsync(v =>
-             v.SolicitudMedicaId == visita.SolicitudMedicaId);
+                .FirstOrDefaultAsync(v =>
+                    v.SolicitudMedicaId == visita.SolicitudMedicaId);
 
             if (visitaExistente != null)
             {
@@ -93,11 +125,13 @@ namespace Asilo.Web.Controllers
                 PacienteId = visita.PacienteId,
                 Fecha = DateTime.Now,
                 TipoRegistro = "Visita médica",
-                Descripcion = $"Diagnóstico: {visita.Diagnostico}",
+
+                Descripcion =
+                    $"Diagnóstico: {visita.Diagnostico}",
+
                 Observaciones =
-                    $"Tratamiento: {visita.Tratamiento}\n" +
-                    $"Indicaciones: {visita.Indicaciones}\n" +
                     $"Observaciones: {visita.Observaciones}",
+
                 ProfesionalResponsable = visita.Medico
             };
 

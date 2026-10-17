@@ -2,95 +2,299 @@
 
 @{
     ViewData["Title"] = "Detalle de receta";
+
+    var totalReceta = Model.Detalles.Sum(d => d.Subtotal);
+    var entregada = Model.Estado == "Entregada";
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
 
+    <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
-            <h2>Detalle de receta</h2>
-            <p class="text-muted">
+            <h2 class="mb-1">
+                Detalle de receta
+            </h2>
+
+            <p class="text-muted mb-0">
                 Medicamentos prescritos al paciente.
             </p>
         </div>
 
         <a asp-action="Index"
            class="btn btn-secondary">
-            Volver
+            Volver a farmacia
         </a>
+
     </div>
 
-    <div class="card shadow-sm mb-4">
+
+    <!-- Mensajes -->
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    @if (TempData["Advertencia"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Advertencia"]
+        </div>
+    }
+
+
+    <!-- Datos generales -->
+    <div class="card shadow-sm border-0 mb-4">
+
         <div class="card-body">
 
-            <p>
-                <strong>Paciente:</strong>
-                @Model.Paciente?.NombreCompleto
-            </p>
+            <div class="row">
 
-            <p>
-                <strong>Médico:</strong>
-                @Model.Medico
-            </p>
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block">
+                        Paciente
+                    </small>
 
-            <p>
-                <strong>Fecha:</strong>
-                @Model.FechaReceta.ToString("dd/MM/yyyy HH:mm")
-            </p>
+                    <strong>
+                        @Model.Paciente?.NombreCompleto
+                    </strong>
+                </div>
 
-            <p>
-                <strong>Estado:</strong>
-                @Model.Estado
-            </p>
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block">
+                        Médico
+                    </small>
 
-            <p>
-                <strong>Indicaciones generales:</strong>
-                @Model.IndicacionesGenerales
-            </p>
+                    <strong>
+                        @Model.Medico
+                    </strong>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block">
+                        Fecha
+                    </small>
+
+                    <strong>
+                        @Model.FechaReceta.ToString("dd/MM/yyyy HH:mm")
+                    </strong>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <small class="text-muted d-block">
+                        Estado
+                    </small>
+
+                    @if (entregada)
+                    {
+                        <span class="badge bg-success">
+                            Entregada
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">
+                            @Model.Estado
+                        </span>
+                    }
+
+                </div>
+
+            </div>
 
         </div>
+
     </div>
 
-    <h4 class="mb-3">Medicamentos</h4>
 
-    @if (!Model.Detalles.Any())
-    {
-        <div class="alert alert-info">
-            La receta no tiene medicamentos registrados.
+    <!-- Medicamentos -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <h4 class="mb-3">
+                Medicamentos
+            </h4>
+
+            @if (!Model.Detalles.Any())
+            {
+                <div class="alert alert-info mb-0">
+                    La receta no tiene medicamentos registrados.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-striped table-hover align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Dosis</th>
+                                <th>Frecuencia</th>
+                                <th>Duración</th>
+                                <th>Indicaciones</th>
+                                <th>Cantidad entregada</th>
+                                <th>Precio unitario</th>
+                                <th>Subtotal</th>
+
+                                @if (!entregada)
+                                {
+                                    <th>Acción</th>
+                                }
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var detalle in Model.Detalles)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            @detalle.Medicamento
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        @detalle.Dosis
+                                    </td>
+
+                                    <td>
+                                        @detalle.Frecuencia
+                                    </td>
+
+                                    <td>
+                                        @detalle.Duracion
+                                    </td>
+
+                                    <td>
+                                        @detalle.Indicaciones
+                                    </td>
+
+
+                                    @if (!entregada)
+                                    {
+                                        <td>
+                                            <input type="number"
+                                                   name="cantidad"
+                                                   value="@detalle.Cantidad"
+                                                   min="1"
+                                                   step="1"
+                                                   class="form-control"
+                                                   form="formCosto-@detalle.Id" />
+                                        </td>
+
+                                        <td>
+                                            <input type="number"
+                                                   name="precioUnitario"
+                                                   value="@detalle.PrecioUnitario.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                                   min="0.01"
+                                                   step="0.01"
+                                                   class="form-control"
+                                                   form="formCosto-@detalle.Id" />
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @detalle.Cantidad
+                                        </td>
+
+                                        <td>
+                                            Q @detalle.PrecioUnitario.ToString("0.00")
+                                        </td>
+                                    }
+
+                                    <td>
+                                        <strong>
+                                            Q @detalle.Subtotal.ToString("0.00")
+                                        </strong>
+                                    </td>
+
+
+                                    @if (!entregada)
+                                    {
+                                        <td>
+                                            <form id="formCosto-@detalle.Id"
+                                                  asp-action="ActualizarCosto"
+                                                  method="post">
+
+                                                <input type="hidden"
+                                                       name="detalleId"
+                                                       value="@detalle.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-primary btn-sm">
+                                                    Guardar
+                                                </button>
+
+                                            </form>
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- Total -->
+                <div class="d-flex justify-content-end mt-4">
+
+                    <div class="text-end">
+
+                        <small class="text-muted d-block">
+                            Total de la receta
+                        </small>
+
+                        <strong class="fs-4">
+                            Q @totalReceta.ToString("0.00")
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Confirmar entrega -->
+                @if (!entregada)
+                {
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-end">
+
+                        <form asp-action="Entregar"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.Id" />
+
+                            <button type="submit"
+                                    class="btn btn-success">
+                                Confirmar entrega
+                            </button>
+
+                        </form>
+
+                    </div>
+                }
+               
+
+            }
+
         </div>
-    }
-    else
-    {
-        <div class="table-responsive">
 
-            <table class="table table-striped table-hover">
-
-                <thead>
-                    <tr>
-                        <th>Medicamento</th>
-                        <th>Dosis</th>
-                        <th>Frecuencia</th>
-                        <th>Duración</th>
-                        <th>Indicaciones</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var detalle in Model.Detalles)
-                    {
-                        <tr>
-                            <td>@detalle.Medicamento</td>
-                            <td>@detalle.Dosis</td>
-                            <td>@detalle.Frecuencia</td>
-                            <td>@detalle.Duracion</td>
-                            <td>@detalle.Indicaciones</td>
-                        </tr>
-                    }
-                </tbody>
-
-            </table>
-
-        </div>
-    }
+    </div>
 
 </div>

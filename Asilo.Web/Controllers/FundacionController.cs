@@ -47,13 +47,14 @@ namespace Asilo.Web.Controllers
             }
 
             ViewBag.MedicosEspecialistas = await _context.Usuarios
-                .Include(u => u.Rol)
-                .Where(u =>
-                    u.Estado &&
-                    u.Rol != null &&
-                    u.Rol.Nombre == "Médico especialista")
-                .OrderBy(u => u.NombreUsuario)
-                .ToListAsync();
+     .Include(u => u.Rol)
+     .Where(u =>
+         u.Estado &&
+         u.Rol != null &&
+         u.Rol.Nombre == "Médico especialista" &&
+         u.Especialidad == solicitud.Especialidad)
+     .OrderBy(u => u.NombreUsuario)
+     .ToListAsync();
 
             ViewBag.Enfermeros = await _context.Usuarios
                 .Include(u => u.Rol)
@@ -71,29 +72,6 @@ namespace Asilo.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Asignar(SolicitudMedica solicitud)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.MedicosEspecialistas = await _context.Usuarios
-                    .Include(u => u.Rol)
-                    .Where(u =>
-                        u.Estado &&
-                        u.Rol != null &&
-                        u.Rol.Nombre == "Médico especialista")
-                    .OrderBy(u => u.NombreUsuario)
-                    .ToListAsync();
-
-                ViewBag.Enfermeros = await _context.Usuarios
-                    .Include(u => u.Rol)
-                    .Where(u =>
-                        u.Estado &&
-                        u.Rol != null &&
-                        u.Rol.Nombre == "Enfermero")
-                    .OrderBy(u => u.NombreUsuario)
-                    .ToListAsync();
-
-                return View(solicitud);
-            }
-
             var solicitudExistente = await _context.SolicitudesMedicas
                 .Include(s => s.Paciente)
                     .ThenInclude(p => p.Familiares)
@@ -106,11 +84,92 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            solicitudExistente.Especialidad = solicitud.Especialidad;
+            var medicosDisponibles = await _context.Usuarios
+                .Include(u => u.Rol)
+                .Where(u =>
+                    u.Estado &&
+                    u.Rol != null &&
+                    u.Rol.Nombre == "Médico especialista" &&
+                    u.Especialidad == solicitudExistente.Especialidad)
+                .OrderBy(u => u.NombreUsuario)
+                .ToListAsync();
+
+            if (!medicosDisponibles.Any())
+            {
+                ModelState.AddModelError(
+                    "",
+                    $"No hay médicos especialistas registrados para {solicitudExistente.Especialidad}."
+                );
+            }
+
+            if (!solicitud.MedicoEspecialistaId.HasValue)
+            {
+                ModelState.AddModelError(
+                    "MedicoEspecialistaId",
+                    "Debe seleccionar un médico especialista."
+                );
+            }
+            else
+            {
+                var medicoSeleccionado = medicosDisponibles
+                    .FirstOrDefault(m => m.Id == solicitud.MedicoEspecialistaId.Value);
+
+                if (medicoSeleccionado == null)
+                {
+                    ModelState.AddModelError(
+                        "MedicoEspecialistaId",
+                        $"El médico seleccionado no pertenece a la especialidad requerida: {solicitudExistente.Especialidad}."
+                    );
+                }
+            }
+
+            if (!solicitud.EnfermeroId.HasValue)
+            {
+                ModelState.AddModelError(
+                    "EnfermeroId",
+                    "Debe seleccionar un enfermero acompañante."
+                );
+            }
+
+            if (!solicitud.FechaAtencion.HasValue)
+            {
+                ModelState.AddModelError(
+                    "FechaAtencion",
+                    "Debe seleccionar la fecha y hora de atención."
+                );
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.MedicosEspecialistas = medicosDisponibles;
+
+                ViewBag.Enfermeros = await _context.Usuarios
+                    .Include(u => u.Rol)
+                    .Where(u =>
+                        u.Estado &&
+                        u.Rol != null &&
+                        u.Rol.Nombre == "Enfermero")
+                    .OrderBy(u => u.NombreUsuario)
+                    .ToListAsync();
+
+                solicitudExistente.MedicoEspecialistaId =
+                    solicitud.MedicoEspecialistaId;
+
+                solicitudExistente.EnfermeroId =
+                    solicitud.EnfermeroId;
+
+                solicitudExistente.FechaAtencion =
+                    solicitud.FechaAtencion;
+
+                return View(solicitudExistente);
+            }
+
             solicitudExistente.MedicoEspecialistaId =
                 solicitud.MedicoEspecialistaId;
+
             solicitudExistente.EnfermeroId =
                 solicitud.EnfermeroId;
+
             solicitudExistente.FechaAtencion =
                 solicitud.FechaAtencion;
 
@@ -118,7 +177,6 @@ namespace Asilo.Web.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Recargar relaciones ya actualizadas
             await _context.Entry(solicitudExistente)
                 .Reference(s => s.MedicoEspecialista)
                 .LoadAsync();

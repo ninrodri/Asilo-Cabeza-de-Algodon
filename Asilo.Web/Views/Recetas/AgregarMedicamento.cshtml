@@ -6,92 +6,171 @@
     var receta = ViewBag.Receta as Asilo.Web.Models.Receta;
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
 
-    <h2>Agregar medicamento</h2>
+    <div class="mb-4">
+        <h2 class="mb-1">Agregar medicamento</h2>
 
-    <div class="alert alert-info">
-        <strong>Paciente:</strong>
-        @receta?.Paciente?.NombreCompleto
-        <br />
-
-        <strong>Médico:</strong>
-        @receta?.Medico
+        <p class="text-muted mb-0">
+            Registre el medicamento indicado para el paciente.
+        </p>
     </div>
 
-    <form asp-action="AgregarMedicamento" method="post">
 
-        <input type="hidden"
-               asp-for="RecetaId" />
+    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="mb-3">
-            <label asp-for="Medicamento"
-                   class="form-label">
-            </label>
+        <div class="card-body">
 
-            <input asp-for="Medicamento"
-                   class="form-control"
-                   placeholder="Ej. Omeprazol" />
+            <div class="row">
 
-            <span asp-validation-for="Medicamento"
-                  class="text-danger">
-            </span>
+                <div class="col-md-6">
+                    <small class="text-muted d-block">
+                        Paciente
+                    </small>
+
+                    <strong>
+                        @receta?.Paciente?.NombreCompleto
+                    </strong>
+                </div>
+
+                <div class="col-md-6">
+                    <small class="text-muted d-block">
+                        Médico
+                    </small>
+
+                    <strong>
+                        @receta?.Medico
+                    </strong>
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="mb-3">
-            <label asp-for="Dosis"
-                   class="form-label">
-            </label>
+    </div>
 
-            <input asp-for="Dosis"
-                   class="form-control"
-                   placeholder="Ej. 20 mg" />
 
-            <span asp-validation-for="Dosis"
-                  class="text-danger">
-            </span>
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <form asp-action="AgregarMedicamento"
+                  method="post">
+
+                <input type="hidden"
+                       asp-for="RecetaId" />
+
+
+                <div class="mb-3">
+
+                    <label asp-for="Medicamento"
+                           class="form-label">
+                        Medicamento
+                    </label>
+
+                    <input asp-for="Medicamento"
+                           class="form-control"
+                           placeholder="Ej. Omeprazol" />
+
+                    <span asp-validation-for="Medicamento"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label asp-for="Dosis"
+                               class="form-label">
+                            Dosis
+                        </label>
+
+                        <input asp-for="Dosis"
+                               class="form-control"
+                               placeholder="Ej. 20 mg" />
+
+                        <span asp-validation-for="Dosis"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="col-md-4 mb-3">
+
+                        <label asp-for="Frecuencia"
+                               class="form-label">
+                            Frecuencia
+                        </label>
+
+                        <input asp-for="Frecuencia"
+                               class="form-control"
+                               placeholder="Ej. Cada 8 horas" />
+
+                        <span asp-validation-for="Frecuencia"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="col-md-4 mb-3">
+
+                        <label asp-for="Duracion"
+                               class="form-label">
+                            Duración
+                        </label>
+
+                        <input asp-for="Duracion"
+                               class="form-control"
+                               placeholder="Ej. 7 días" />
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="Indicaciones"
+                           class="form-label">
+                        Indicaciones de administración
+                    </label>
+
+                    <textarea asp-for="Indicaciones"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Ej. Tomar después de los alimentos"></textarea>
+
+                </div>
+
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Guardar medicamento
+                    </button>
+
+                    @if (receta != null)
+                    {
+                        <a asp-controller="VisitaMedica"
+                           asp-action="Ver"
+                           asp-route-id="@receta.VisitaMedicaId"
+                           class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    }
+
+                </div>
+
+            </form>
+
         </div>
 
-        <div class="mb-3">
-            <label asp-for="Frecuencia"
-                   class="form-label">
-            </label>
-
-            <input asp-for="Frecuencia"
-                   class="form-control"
-                   placeholder="Ej. Cada 24 horas" />
-
-            <span asp-validation-for="Frecuencia"
-                  class="text-danger">
-            </span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Duracion"
-                   class="form-label">
-            </label>
-
-            <input asp-for="Duracion"
-                   class="form-control"
-                   placeholder="Ej. 7 días" />
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Indicaciones"
-                   class="form-label">
-            </label>
-
-            <textarea asp-for="Indicaciones"
-                      class="form-control"
-                      rows="3"
-                      placeholder="Ej. Tomar antes del desayuno"></textarea>
-        </div>
-
-        <button type="submit"
-                class="btn btn-primary">
-            Guardar medicamento
-        </button>
-
-    </form>
+    </div>
 
 </div>

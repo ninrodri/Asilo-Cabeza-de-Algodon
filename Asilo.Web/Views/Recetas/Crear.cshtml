@@ -17,30 +17,29 @@
         @Model.Medico
     </div>
 
+    <p class="text-muted">
+        Cree la receta para comenzar a agregar los medicamentos indicados.
+    </p>
+
     <form asp-action="Crear" method="post">
 
-        <input type="hidden" asp-for="PacienteId" />
-        <input type="hidden" asp-for="VisitaMedicaId" />
-        <input type="hidden" asp-for="Medico" />
+        <input type="hidden"
+               asp-for="PacienteId" />
 
-        <div class="mb-3">
-            <label asp-for="IndicacionesGenerales"
-                   class="form-label">
-            </label>
+        <input type="hidden"
+               asp-for="VisitaMedicaId" />
 
-            <textarea asp-for="IndicacionesGenerales"
-                      class="form-control"
-                      rows="4"
-                      placeholder="Indicaciones generales de la receta"></textarea>
-        </div>
+        <input type="hidden"
+               asp-for="Medico" />
 
         <button type="submit"
                 class="btn btn-primary">
             Crear receta
         </button>
 
-        <a asp-controller="Solicitudes"
-           asp-action="Index"
+        <a asp-controller="VisitaMedica"
+           asp-action="Ver"
+           asp-route-id="@Model.VisitaMedicaId"
            class="btn btn-secondary">
             Cancelar
         </a>

@@ -22,6 +22,27 @@
         </a>
     </div>
 
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    @if (TempData["Aviso"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["Aviso"]
+        </div>
+    }
+
+    @if (TempData["Advertencia"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Advertencia"]
+        </div>
+    }
+
     <div class="card shadow-sm mb-4">
         <div class="card-body">
 
@@ -45,24 +66,38 @@
                 @Model.Estado
             </p>
 
-            <p>
-                <strong>Indicaciones generales:</strong>
-                @Model.IndicacionesGenerales
-            </p>
 
         </div>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-end gap-2 mb-3">
 
-        <h4>Medicamentos</h4>
+        @if (Model.Estado == "Pendiente")
+        {
+            <a asp-action="AgregarMedicamento"
+               asp-route-recetaId="@Model.Id"
+               class="btn btn-primary">
+                Agregar medicamento
+            </a>
 
-        <a asp-action="AgregarMedicamento"
-           asp-route-recetaId="@Model.Id"
-           class="btn btn-primary">
-            Agregar medicamento
-        </a>
+            <form asp-action="Finalizar"
+                  method="post"
+                  class="d-inline">
 
+                <input type="hidden"
+                       name="id"
+                       value="@Model.Id" />
+
+                <button type="submit"
+                        class="btn btn-success">
+                    Emitir receta
+                </button>
+
+            </form>
+        }
+
+    </div>
+    
     </div>
 
     @if (!Model.Detalles.Any())

@@ -28,49 +28,46 @@
              class="text-danger mb-3">
         </div>
 
-        <div class="mb-3">
-            <label asp-for="MedicoEspecialistaId"
-                   class="form-label">
-                Médico especialista
-            </label>
+       <div class="mb-3">
+    <label asp-for="MedicoEspecialistaId"
+           class="form-label">
+        Médico especialista
+    </label>
 
-            <select asp-for="MedicoEspecialistaId"
-                    id="MedicoEspecialistaId"
-                    class="form-select">
+    <select asp-for="MedicoEspecialistaId"
+            id="MedicoEspecialistaId"
+            class="form-select">
 
-                <option value="">
-                    Seleccione un especialista
-                </option>
+        <option value="">
+            Seleccione un especialista
+        </option>
 
-                @foreach (var medico in ViewBag.MedicosEspecialistas)
-                {
-                    <option value="@medico.Id"
-                            data-especialidad="@medico.Especialidad">
-                        @medico.NombreUsuario
-                        @if (!string.IsNullOrWhiteSpace(medico.Especialidad))
-                        {
-                            <text> - @medico.Especialidad</text>
-                        }
-                    </option>
-                }
+        @foreach (var medico in ViewBag.MedicosEspecialistas)
+        {
+            <option value="@medico.Id"
+                    data-especialidad="@medico.Especialidad">
+                @medico.NombreUsuario
+            </option>
+        }
 
-            </select>
+    </select>
 
-            <span asp-validation-for="MedicoEspecialistaId"
-                  class="text-danger">
-            </span>
-        </div>
+    <span asp-validation-for="MedicoEspecialistaId"
+          class="text-danger">
+    </span>
+</div>
 
         <div class="mb-3">
-            <label asp-for="Especialidad"
-                   class="form-label">
-            </label>
+    <label asp-for="Especialidad"
+           class="form-label">
+        Especialidad requerida
+    </label>
 
-            <input asp-for="Especialidad"
-                   id="Especialidad"
-                   class="form-control"
-                   readonly />
-        </div>
+    <input asp-for="Especialidad"
+           id="Especialidad"
+           class="form-control"
+           readonly />
+</div>
 
         <div class="mb-3">
             <label asp-for="EnfermeroId"

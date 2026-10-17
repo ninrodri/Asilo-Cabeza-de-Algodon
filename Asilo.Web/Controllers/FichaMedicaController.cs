@@ -25,7 +25,13 @@ namespace Asilo.Web.Controllers
 
             if (ficha == null)
             {
-                return RedirectToAction("Crear", new { pacienteId });
+                TempData["Aviso"] =
+                    "Este interno todavía no tiene una ficha médica registrada. Puede crearla a continuación.";
+
+                return RedirectToAction(
+                    "Crear",
+                    new { pacienteId = pacienteId }
+                );
             }
 
             return View(ficha);

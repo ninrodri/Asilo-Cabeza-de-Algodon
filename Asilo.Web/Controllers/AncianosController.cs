@@ -123,10 +123,26 @@ namespace Asilo.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registrar(Anciano anciano)
         {
             if (!ModelState.IsValid)
             {
+                return View(anciano);
+            }
+
+            var duplicado = await _context.Pacientes
+                .AnyAsync(p =>
+                    p.NombreCompleto == anciano.NombreCompleto &&
+                    p.FechaNacimiento == anciano.FechaNacimiento);
+
+            if (duplicado)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Ya existe un interno registrado con el mismo nombre y fecha de nacimiento."
+                );
+
                 return View(anciano);
             }
 
