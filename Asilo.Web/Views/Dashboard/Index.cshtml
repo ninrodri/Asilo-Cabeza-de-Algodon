@@ -2,6 +2,15 @@
 
 @{
     ViewData["Title"] = "Panel principal";
+
+    var esAdministrador = User.IsInRole("Administrador");
+    var esAdministrativo = User.IsInRole("Personal administrativo");
+    var esMedicoGeneral = User.IsInRole("Médico general");
+    var esEspecialista = User.IsInRole("Médico especialista");
+    var esFundacion = User.IsInRole("Fundación");
+    var esLaboratorio = User.IsInRole("Laboratorio");
+    var esFarmacia = User.IsInRole("Farmacia");
+    var esEnfermero = User.IsInRole("Enfermero");
 }
 
 <style>
@@ -23,17 +32,17 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
-        .summary-card h6 {
-            font-size: 14px;
-            margin-bottom: 10px;
-            opacity: 0.95;
-        }
+    .summary-card h6 {
+        font-size: 14px;
+        margin-bottom: 10px;
+        opacity: 0.95;
+    }
 
-        .summary-card h2 {
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0;
-        }
+    .summary-card h2 {
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0;
+    }
 
     .bg-card-1 {
         background: linear-gradient(135deg, #3b82f6, #2563eb);
@@ -58,7 +67,8 @@
         margin-bottom: 18px;
     }
 
-    .quick-card, .module-card {
+    .quick-card,
+    .module-card {
         border: 1px solid #e5e7eb;
         border-radius: 14px;
         background: #fff;
@@ -67,16 +77,18 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
 
-        .quick-card h5, .module-card h5 {
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+    .quick-card h5,
+    .module-card h5 {
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
 
-        .quick-card p, .module-card p {
-            color: #6c757d;
-            font-size: 14px;
-            min-height: 40px;
-        }
+    .quick-card p,
+    .module-card p {
+        color: #6c757d;
+        font-size: 14px;
+        min-height: 40px;
+    }
 
     .module-group {
         border: 1px solid #e5e7eb;
@@ -86,10 +98,10 @@
         margin-bottom: 24px;
     }
 
-        .module-group h4 {
-            font-weight: 700;
-            margin-bottom: 18px;
-        }
+    .module-group h4 {
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
 </style>
 
 <div class="container mt-4 mb-5">
@@ -99,149 +111,373 @@
         <p>Sistema de Administración del Asilo Cabeza de Algodón</p>
     </div>
 
-    <!-- TARJETAS RESUMEN -->
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show"
+             role="alert">
+
+            @TempData["Exito"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Cerrar">
+            </button>
+        </div>
+    }
+
+
+    <!-- ===================================================== -->
+    <!-- TARJETAS DE RESUMEN -->
+    <!-- ===================================================== -->
+
     <div class="row g-3">
-        <div class="col-md-6 col-lg-3">
-            <div class="summary-card bg-card-1">
-                <h6>Internos registrados</h6>
-                <h2>@Model.TotalInternos</h2>
-            </div>
-        </div>
 
-        <div class="col-md-6 col-lg-3">
-            <div class="summary-card bg-card-2">
-                <h6>Solicitudes pendientes</h6>
-                <h2>@Model.SolicitudesPendientes</h2>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="summary-card bg-card-3">
-                <h6>Exámenes pendientes</h6>
-                <h2>@Model.ExamenesPendientes</h2>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-3">
-            <div class="summary-card bg-card-4">
-                <h6>Cobros pendientes</h6>
-                <h2>@Model.CobrosPendientes</h2>
-            </div>
-        </div>
-    </div>
-
-    <!-- ACCESOS RÁPIDOS -->
-    <div class="section-title">Accesos rápidos</div>
-    <div class="row g-3">
-        <div class="col-md-6 col-lg-4">
-            <div class="quick-card">
-                <h5>Nuevo interno</h5>
-                <p>Registrar un nuevo residente del asilo.</p>
-                <a asp-controller="Ancianos" asp-action="Registrar" class="btn btn-primary">Ir</a>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body">
-                    <h5>Consulta médica general</h5>
-
-                    <p class="text-muted">
-                        Registrar la evaluación inicial del paciente
-                        y decidir si requiere atención especializada.
-                    </p>
-
-                    <a asp-controller="ConsultaGeneral"
-                       asp-action="Crear"
-                       class="btn btn-primary">
-                        Ir
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="quick-card">
-                <h5>Ver reportes</h5>
-                <p>Consultar reportes clínicos, administrativos y financieros.</p>
-                <a asp-controller="Reportes" asp-action="Index" class="btn btn-dark">Ir</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- ATENCIÓN MÉDICA -->
-    <div class="section-title">Atención médica</div>
-    <div class="module-group">
-        <div class="row g-3">
-
-            <div class="col-md-6 col-lg-4">
-                <div class="module-card">
-                    <h5>Internos</h5>
-                    <p>Registro, consulta y ficha médica de residentes.</p>
-                    <a asp-controller="Ancianos" asp-action="Index" class="btn btn-outline-primary">Ver internos</a>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="module-card">
-                    <h5>Familiares</h5>
-                    <p>Gestión de responsables y datos de contacto.</p>
-                    <a asp-controller="Familiares" asp-action="Index" class="btn btn-outline-primary">Ver familiares</a>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="module-card">
-                    <h5>Solicitudes médicas</h5>
-                    <p>Control de referencias y solicitudes a especialistas.</p>
-                    <a asp-controller="Solicitudes" asp-action="Index" class="btn btn-outline-primary">Ver solicitudes</a>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="module-card">
-                    <h5>Fundación</h5>
-                    <p>Asignación de especialistas, enfermero y horario.</p>
-                    <a asp-controller="Fundacion" asp-action="Index" class="btn btn-outline-primary">Gestionar</a>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="module-card">
-                    <h5>Laboratorio</h5>
-                    <p>Solicitud, seguimiento y resultados de exámenes.</p>
-                    <a asp-controller="Laboratorio" asp-action="Index" class="btn btn-outline-primary">Ver laboratorio</a>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="module-card">
-                    <h5>Farmacia</h5>
-                    <p>Medicamentos recetados y control de entrega.</p>
-                    <a asp-controller="Farmacia" asp-action="Index" class="btn btn-outline-primary">Ver farmacia</a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ADMINISTRACIÓN FINANCIERA -->
-    <div class="section-title">Administración financiera</div>
-    <div class="module-group">
-        <div class="row g-3">
-
-
+        @if (esAdministrador ||
+             esAdministrativo ||
+             esMedicoGeneral ||
+             esEspecialista ||
+             esEnfermero)
+        {
             <div class="col-md-6 col-lg-3">
-                <div class="module-card">
+                <div class="summary-card bg-card-1">
+                    <h6>Internos registrados</h6>
+                    <h2>@Model.TotalInternos</h2>
+                </div>
+            </div>
+        }
 
-                    <div class="card-body">
+        @if (esAdministrador ||
+             esMedicoGeneral ||
+             esFundacion)
+        {
+            <div class="col-md-6 col-lg-3">
+                <div class="summary-card bg-card-2">
+                    <h6>Solicitudes pendientes</h6>
+                    <h2>@Model.SolicitudesPendientes</h2>
+                </div>
+            </div>
+        }
 
-                        <h5 class="card-title">
-                            Cobros
-                        </h5>
+        @if (esAdministrador ||
+             esMedicoGeneral ||
+             esEspecialista ||
+             esLaboratorio)
+        {
+            <div class="col-md-6 col-lg-3">
+                <div class="summary-card bg-card-3">
+                    <h6>Exámenes pendientes</h6>
+                    <h2>@Model.ExamenesPendientes</h2>
+                </div>
+            </div>
+        }
 
-                        <p class="text-muted">
-                            Gestión de cobros por consultas, exámenes y medicamentos.
+        @if (esAdministrador || esAdministrativo)
+        {
+            <div class="col-md-6 col-lg-3">
+                <div class="summary-card bg-card-4">
+                    <h6>Cobros pendientes</h6>
+                    <h2>@Model.CobrosPendientes</h2>
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- ACCESOS RÁPIDOS -->
+    <!-- ===================================================== -->
+
+    @if (esAdministrador ||
+         esAdministrativo ||
+         esMedicoGeneral)
+    {
+        <div class="section-title">
+            Accesos rápidos
+        </div>
+
+        <div class="row g-3">
+
+            @if (esAdministrador || esAdministrativo)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="quick-card">
+
+                        <h5>Nuevo interno</h5>
+
+                        <p>
+                            Registrar un nuevo residente del asilo.
+                        </p>
+
+                        <a asp-controller="Ancianos"
+                           asp-action="Registrar"
+                           class="btn btn-primary">
+                            Ir
+                        </a>
+
+                    </div>
+                </div>
+            }
+
+            @if (esAdministrador || esMedicoGeneral)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="quick-card">
+
+                        <h5>Consulta médica general</h5>
+
+                        <p>
+                            Registrar la evaluación inicial del paciente
+                            y decidir si requiere atención especializada.
+                        </p>
+
+                        <a asp-controller="ConsultaGeneral"
+                           asp-action="Crear"
+                           class="btn btn-primary">
+                            Ir
+                        </a>
+
+                    </div>
+                </div>
+            }
+
+            @if (esAdministrador || esAdministrativo)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="quick-card">
+
+                        <h5>Ver reportes</h5>
+
+                        <p>
+                            Consultar reportes clínicos,
+                            administrativos y financieros.
+                        </p>
+
+                        <a asp-controller="Reportes"
+                           asp-action="Index"
+                           class="btn btn-dark">
+                            Ir
+                        </a>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+
+
+    <!-- ===================================================== -->
+    <!-- ATENCIÓN MÉDICA -->
+    <!-- ===================================================== -->
+
+    @if (esAdministrador ||
+         esAdministrativo ||
+         esMedicoGeneral ||
+         esEspecialista ||
+         esFundacion ||
+         esLaboratorio ||
+         esFarmacia ||
+         esEnfermero)
+    {
+        <div class="section-title">
+            Atención médica
+        </div>
+
+        <div class="module-group">
+
+            <div class="row g-3">
+
+                <!-- INTERNOS -->
+
+                @if (esAdministrador ||
+                     esAdministrativo ||
+                     esMedicoGeneral ||
+                     esEspecialista ||
+                     esEnfermero)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="module-card">
+
+                            <h5>Internos</h5>
+
+                            <p>
+                                Consulta de residentes y
+                                acceso a información médica.
+                            </p>
+
+                            <a asp-controller="Ancianos"
+                               asp-action="Index"
+                               class="btn btn-outline-primary">
+                                Ver internos
+                            </a>
+
+                        </div>
+                    </div>
+                }
+
+
+                <!-- FAMILIARES -->
+
+                @if (esAdministrador || esAdministrativo)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="module-card">
+
+                            <h5>Familiares</h5>
+
+                            <p>
+                                Gestión de responsables
+                                y datos de contacto.
+                            </p>
+
+                            <a asp-controller="Familiares"
+                               asp-action="Index"
+                               class="btn btn-outline-primary">
+                                Ver familiares
+                            </a>
+
+                        </div>
+                    </div>
+                }
+
+
+                <!-- SOLICITUDES MÉDICAS -->
+
+                @if (esAdministrador ||
+                     esMedicoGeneral ||
+                     esEspecialista
+                     )
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="module-card">
+
+                            <h5>Solicitudes médicas</h5>
+
+                            <p>
+                                Control de referencias y
+                                solicitudes a especialistas.
+                            </p>
+
+                            <a asp-controller="Solicitudes"
+                               asp-action="Index"
+                               class="btn btn-outline-primary">
+                                Ver solicitudes
+                            </a>
+
+                        </div>
+                    </div>
+                }
+
+
+                <!-- FUNDACIÓN -->
+
+                @if (esAdministrador || esFundacion)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="module-card">
+
+                            <h5>Fundación</h5>
+
+                            <p>
+                                Asignación de especialista,
+                                enfermero y horario.
+                            </p>
+
+                            <a asp-controller="Fundacion"
+                               asp-action="Index"
+                               class="btn btn-outline-primary">
+                                Gestionar
+                            </a>
+
+                        </div>
+                    </div>
+                }
+
+
+                <!-- LABORATORIO -->
+
+                @if (esAdministrador ||
+                     esLaboratorio ||
+                     esMedicoGeneral ||
+                     esEspecialista)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="module-card">
+
+                            <h5>Laboratorio</h5>
+
+                            <p>
+                                Solicitud, seguimiento
+                                y resultados de exámenes.
+                            </p>
+
+                            <a asp-controller="Laboratorio"
+                               asp-action="Index"
+                               class="btn btn-outline-primary">
+                                Ver laboratorio
+                            </a>
+
+                        </div>
+                    </div>
+                }
+
+
+                <!-- FARMACIA -->
+
+                @if (esAdministrador || esFarmacia)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="module-card">
+
+                            <h5>Farmacia</h5>
+
+                            <p>
+                                Medicamentos recetados
+                                y control de entrega.
+                            </p>
+
+                            <a asp-controller="Farmacia"
+                               asp-action="Index"
+                               class="btn btn-outline-primary">
+                                Ver farmacia
+                            </a>
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- ===================================================== -->
+    <!-- ADMINISTRACIÓN FINANCIERA -->
+    <!-- ===================================================== -->
+
+    @if (esAdministrador || esAdministrativo)
+    {
+        <div class="section-title">
+            Administración financiera
+        </div>
+
+        <div class="module-group">
+
+            <div class="row g-3">
+
+                <!-- COBROS -->
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="module-card">
+
+                        <h5>Cobros</h5>
+
+                        <p>
+                            Gestión de cobros por consultas,
+                            exámenes y medicamentos.
                         </p>
 
                         <a asp-controller="Cobros"
@@ -251,58 +487,160 @@
                         </a>
 
                     </div>
-
                 </div>
-            </div>
 
 
-            <div class="col-md-6 col-lg-3">
-                <div class="module-card">
-                    <h5>Cuotas mensuales</h5>
-                    <p>Control de pagos mensuales de familiares.</p>
-                    <a asp-controller="CuotasMensuales" asp-action="Index" class="btn btn-outline-success">Ver cuotas</a>
+                <!-- CUOTAS -->
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="module-card">
+
+                        <h5>Cuotas mensuales</h5>
+
+                        <p>
+                            Control de pagos mensuales
+                            realizados por familiares.
+                        </p>
+
+                        <a asp-controller="CuotasMensuales"
+                           asp-action="Index"
+                           class="btn btn-outline-success">
+                            Ver cuotas
+                        </a>
+
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="module-card">
-                    <h5>Donaciones</h5>
-                    <p>Registro de aportes nacionales e internacionales.</p>
-                    <a asp-controller="Donaciones" asp-action="Index" class="btn btn-outline-success">Ver donaciones</a>
-                </div>
-            </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="module-card">
-                    <h5>Gastos</h5>
-                    <p>Control de egresos y pagos operativos del asilo.</p>
-                    <a asp-controller="Gastos" asp-action="Index" class="btn btn-outline-success">Ver gastos</a>
-                </div>
-            </div>
+                <!-- DONACIONES -->
 
-            <div class="col-md-6 col-lg-3">
-                <div class="module-card">
-                    <h5>Caja</h5>
-                    <p>Resumen general de entradas, salidas y saldo.</p>
-                    <a asp-controller="Caja" asp-action="Index" class="btn btn-outline-success">Ver caja</a>
+                <div class="col-md-6 col-lg-4">
+                    <div class="module-card">
+
+                        <h5>Donaciones</h5>
+
+                        <p>
+                            Registro de aportes nacionales,
+                            internacionales y particulares.
+                        </p>
+
+                        <a asp-controller="Donaciones"
+                           asp-action="Index"
+                           class="btn btn-outline-success">
+                            Ver donaciones
+                        </a>
+
+                    </div>
                 </div>
+
+
+                <!-- GASTOS -->
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="module-card">
+
+                        <h5>Gastos</h5>
+
+                        <p>
+                            Control de egresos
+                            y pagos operativos del asilo.
+                        </p>
+
+                        <a asp-controller="Gastos"
+                           asp-action="Index"
+                           class="btn btn-outline-success">
+                            Ver gastos
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- CAJA -->
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="module-card">
+
+                        <h5>Caja</h5>
+
+                        <p>
+                            Resumen general de entradas,
+                            salidas y saldo disponible.
+                        </p>
+
+                        <a asp-controller="Caja"
+                           asp-action="Index"
+                           class="btn btn-outline-success">
+                            Ver caja
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- CUENTA FUNDACIÓN -->
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="module-card">
+
+                        <h5>Cuenta Fundación</h5>
+
+                        <p>
+                            Control de la deuda por consultas,
+                            exámenes y medicamentos.
+                        </p>
+
+                        <a asp-controller="FundacionFinanzas"
+                           asp-action="Index"
+                           class="btn btn-outline-success">
+                            Ver cuenta
+                        </a>
+
+                    </div>
+                </div>
+
             </div>
 
         </div>
-    </div>
+    }
 
+
+    <!-- ===================================================== -->
     <!-- REPORTES -->
-    <div class="section-title">Análisis y reportes</div>
-    <div class="module-group">
-        <div class="row g-3">
-            <div class="col-md-6 col-lg-4">
-                <div class="module-card">
-                    <h5>Reportes</h5>
-                    <p>Reportes clínicos, administrativos y financieros del sistema.</p>
-                    <a asp-controller="Reportes" asp-action="Index" class="btn btn-dark">Consultar reportes</a>
-                </div>
-            </div>
+    <!-- ===================================================== -->
+
+    @if (esAdministrador || esAdministrativo)
+    {
+        <div class="section-title">
+            Análisis y reportes
         </div>
-    </div>
+
+        <div class="module-group">
+
+            <div class="row g-3">
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="module-card">
+
+                        <h5>Reportes</h5>
+
+                        <p>
+                            Reportes clínicos,
+                            administrativos y financieros.
+                        </p>
+
+                        <a asp-controller="Reportes"
+                           asp-action="Index"
+                           class="btn btn-dark">
+                            Consultar reportes
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    }
 
 </div>

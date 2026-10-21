@@ -12,10 +12,16 @@ namespace Asilo.Web.Controllers
     {
         private readonly AsiloDbContext _context;
 
-        public FundacionFinanzasController(AsiloDbContext context)
+        public FundacionFinanzasController(
+            AsiloDbContext context)
         {
             _context = context;
         }
+
+
+        // =========================================================
+        // CUENTA FUNDACIÓN
+        // =========================================================
 
         public async Task<IActionResult> Index()
         {
@@ -23,31 +29,67 @@ namespace Asilo.Web.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
+
             var totalConsultas = detalles
-                .Where(d => d.Tipo == "Consulta médica")
+                .Where(d =>
+                    d.Tipo == "Consulta médica")
                 .Sum(d => d.Monto);
+
 
             var totalLaboratorio = detalles
-                .Where(d => d.Tipo == "Laboratorio")
+                .Where(d =>
+                    d.Tipo == "Laboratorio")
                 .Sum(d => d.Monto);
+
 
             var totalMedicamentos = detalles
-                .Where(d => d.Tipo == "Medicamento")
+                .Where(d =>
+                    d.Tipo == "Medicamento")
                 .Sum(d => d.Monto);
 
-            var totalPagado = await _context.PagosFundacion
-                .SumAsync(p => (decimal?)p.Monto) ?? 0;
 
-            var modelo = new CuentaFundacionViewModel
-            {
-                TotalConsultas = totalConsultas,
-                TotalLaboratorio = totalLaboratorio,
-                TotalMedicamentos = totalMedicamentos,
-                TotalPagado = totalPagado
-            };
+            var totalPagado =
+                await _context.PagosFundacion
+                    .SumAsync(p =>
+                        (decimal?)p.Monto) ?? 0;
+
+
+            // Historial de pagos
+            var pagos =
+                await _context.PagosFundacion
+                    .AsNoTracking()
+                    .OrderByDescending(p =>
+                        p.FechaPago)
+                    .ToListAsync();
+
+
+            var modelo =
+                new CuentaFundacionViewModel
+                {
+                    TotalConsultas =
+                        totalConsultas,
+
+                    TotalLaboratorio =
+                        totalLaboratorio,
+
+                    TotalMedicamentos =
+                        totalMedicamentos,
+
+                    TotalPagado =
+                        totalPagado,
+
+                    Pagos =
+                        pagos
+                };
+
 
             return View(modelo);
         }
+
+
+        // =========================================================
+        // REGISTRAR PAGO - GET
+        // =========================================================
 
         [HttpGet]
         public IActionResult RegistrarPago()
@@ -55,10 +97,26 @@ namespace Asilo.Web.Controllers
             return View();
         }
 
+
+        // =========================================================
+        // REGISTRAR PAGO - POST
+        // =========================================================
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegistrarPago(PagoFundacion pago)
+        public async Task<IActionResult> RegistrarPago(
+            PagoFundacion pago)
         {
+            /*
+             * RegistradoPor no viene desde el formulario.
+             * Lo obtiene automáticamente el sistema
+             * mediante el usuario autenticado.
+             */
+            ModelState.Remove(
+                nameof(pago.RegistradoPor)
+            );
+
+
             if (pago.Monto <= 0)
             {
                 ModelState.AddModelError(
@@ -67,43 +125,84 @@ namespace Asilo.Web.Controllers
                 );
             }
 
-            // Calculamos lo que actualmente se debe a Fundación
-            var totalAdeudado = await _context.DetallesCobro
-                .Where(d =>
-                    d.Tipo == "Consulta médica" ||
-                    d.Tipo == "Laboratorio" ||
-                    d.Tipo == "Medicamento")
-                .SumAsync(d => (decimal?)d.Monto) ?? 0;
 
-            var totalPagado = await _context.PagosFundacion
-                .SumAsync(p => (decimal?)p.Monto) ?? 0;
+            // =====================================================
+            // CALCULAR DEUDA ACTUAL
+            // =====================================================
 
-            var saldoPendiente = totalAdeudado - totalPagado;
+            var totalAdeudado =
+                await _context.DetallesCobro
+
+                    .Where(d =>
+                        d.Tipo == "Consulta médica" ||
+                        d.Tipo == "Laboratorio" ||
+                        d.Tipo == "Medicamento")
+
+                    .SumAsync(d =>
+                        (decimal?)d.Monto) ?? 0;
+
+
+            var totalPagado =
+                await _context.PagosFundacion
+
+                    .SumAsync(p =>
+                        (decimal?)p.Monto) ?? 0;
+
+
+            var saldoPendiente =
+                totalAdeudado -
+                totalPagado;
+
+
+            // =====================================================
+            // VALIDAR QUE NO PAGUE MÁS DE LO ADEUDADO
+            // =====================================================
 
             if (pago.Monto > saldoPendiente)
             {
                 ModelState.AddModelError(
                     nameof(pago.Monto),
+
                     $"El pago no puede ser mayor al saldo pendiente de Q {saldoPendiente:N2}."
                 );
             }
+
 
             if (!ModelState.IsValid)
             {
                 return View(pago);
             }
 
-            pago.FechaPago = DateTime.Now;
+
+            // =====================================================
+            // DATOS AUTOMÁTICOS
+            // =====================================================
+
+            pago.FechaPago =
+                DateTime.Now;
+
+
+            pago.RegistradoPor =
+                User.Identity?.Name
+                ?? "Usuario no identificado";
+
+
+            // =====================================================
+            // GUARDAR
+            // =====================================================
 
             _context.PagosFundacion.Add(pago);
+
             await _context.SaveChangesAsync();
+
 
             TempData["Exito"] =
                 "El pago a Fundación fue registrado correctamente.";
 
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction(
+                nameof(Index)
+            );
         }
-
-
     }
 }

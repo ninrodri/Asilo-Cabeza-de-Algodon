@@ -99,24 +99,6 @@
                                    class="btn btn-info btn-sm">
                                     Ver receta
                                 </a>
-
-                                @if (receta.Estado != "Entregada")
-                                {
-                                    <form asp-action="Entregar"
-                                          method="post"
-                                          class="d-inline">
-
-                                        <input type="hidden"
-                                               name="id"
-                                               value="@receta.Id" />
-
-                                        <button type="submit"
-                                                class="btn btn-success btn-sm">
-                                            Marcar entregada
-                                        </button>
-
-                                    </form>
-                                }
                             </td>
 
                         </tr>

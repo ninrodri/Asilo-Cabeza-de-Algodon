@@ -28,5 +28,9 @@ namespace Asilo.Web.Models
         [Required]
         [Display(Name = "Observaciones")]
         public string Observaciones { get; set; } = "";
+
+        [Required]
+        [Display(Name = "Registrado por")]
+        public string RegistradoPor { get; set; } = "";
     }
 }

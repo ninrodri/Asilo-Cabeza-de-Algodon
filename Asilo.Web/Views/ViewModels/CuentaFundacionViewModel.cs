@@ -1,9 +1,13 @@
-﻿namespace Asilo.Web.ViewModels
+﻿using Asilo.Web.Models;
+
+namespace Asilo.Web.ViewModels
 {
     public class CuentaFundacionViewModel
     {
         public decimal TotalConsultas { get; set; }
+
         public decimal TotalLaboratorio { get; set; }
+
         public decimal TotalMedicamentos { get; set; }
 
         public decimal TotalAdeudado =>
@@ -15,5 +19,7 @@
 
         public decimal SaldoPendiente =>
             TotalAdeudado - TotalPagado;
+
+        public List<PagoFundacion> Pagos { get; set; } = new();
     }
 }

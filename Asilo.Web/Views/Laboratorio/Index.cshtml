@@ -94,32 +94,31 @@
                             </td>
 
                             <td>
-                                <a asp-controller="VisitaMedica"
-                                   asp-action="Ver"
-                                   asp-route-id="@examen.VisitaMedicaId"
-                                   class="btn btn-info btn-sm mb-1">
-                                    Ver visita
-                                </a>
+                                <div class="d-flex flex-column gap-1">
 
-                                @if (examen.Estado != "Completado")
-                                {
-                                    <a asp-action="Resultado"
-                                       asp-route-id="@examen.Id"
-                                       class="btn btn-primary btn-sm mb-1">
-                                        Registrar resultado
-                                    </a>
-                                }
-                                else
-                                {
-                                    <a asp-action="VerResultado"
-                                       asp-route-id="@examen.Id"
-                                       class="btn btn-outline-secondary btn-sm mb-1">
-                                        Ver resultado
-                                    </a>
-                                }
+                                    @if (examen.Estado == "Solicitado")
+                                    {
+                                        @if (User.IsInRole("Administrador") ||
+                                             User.IsInRole("Laboratorio"))
+                                        {
+                                            <a asp-action="Resultado"
+                                               asp-route-id="@examen.Id"
+                                               class="btn btn-primary btn-sm">
+                                                Registrar resultado
+                                            </a>
+                                        }
+                                    }
+                                    else if (examen.Estado == "Completado")
+                                    {
+                                        <a asp-action="VerResultado"
+                                           asp-route-id="@examen.Id"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            Ver resultado
+                                        </a>
+                                    }
+
+                                </div>
                             </td>
-
-
 
                         </tr>
                     }

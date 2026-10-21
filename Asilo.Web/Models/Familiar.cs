@@ -24,5 +24,7 @@ namespace Asilo.Web.Models
         public int PacienteId { get; set; }
 
         public Anciano? Paciente { get; set; }
+
+        public bool Activo { get; set; } = true;
     }
 }

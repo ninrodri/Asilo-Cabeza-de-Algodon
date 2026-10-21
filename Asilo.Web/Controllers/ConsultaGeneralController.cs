@@ -43,64 +43,80 @@ namespace Asilo.Web.Controllers
                 return View(consulta);
             }
 
-            var paciente = await _context.Pacientes
-                .FirstOrDefaultAsync(p => p.Id == consulta.PacienteId);
-
-            if (paciente == null)
-            {
-                ModelState.AddModelError(
-                    "",
-                    "El paciente seleccionado no existe."
-                );
-
-                ViewBag.Pacientes = await _context.Pacientes
-                    .OrderBy(p => p.NombreCompleto)
-                    .ToListAsync();
-
-                return View(consulta);
-            }
-
             consulta.FechaConsulta = DateTime.Now;
-            consulta.Medico = User.Identity?.Name ?? "Médico general";
 
             _context.ConsultasGenerales.Add(consulta);
 
             var historial = new HistorialMedico
             {
                 PacienteId = consulta.PacienteId,
-                Fecha = DateTime.Now,
+                Fecha = consulta.FechaConsulta,
                 TipoRegistro = "Consulta médica general",
                 Descripcion =
-            $"Motivo: {consulta.Motivo}\n" +
-            $"Diagnóstico: {consulta.Diagnostico}",
+                    $"Motivo: {consulta.Motivo}. " +
+                    $"Diagnóstico: {consulta.Diagnostico}.",
                 Observaciones = consulta.Observaciones,
                 ProfesionalResponsable = consulta.Medico
             };
 
             _context.HistorialesMedicos.Add(historial);
 
+            if (consulta.RequiereEspecialista)
+            {
+                if (string.IsNullOrWhiteSpace(consulta.EspecialidadRequerida))
+                {
+                    ModelState.AddModelError(
+                        nameof(consulta.EspecialidadRequerida),
+                        "Debe seleccionar la especialidad requerida."
+                    );
+                }
+
+                if (string.IsNullOrWhiteSpace(consulta.MotivoReferencia))
+                {
+                    ModelState.AddModelError(
+                        nameof(consulta.MotivoReferencia),
+                        "Debe indicar el motivo de la referencia."
+                    );
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.Pacientes = await _context.Pacientes
+                        .OrderBy(p => p.NombreCompleto)
+                        .ToListAsync();
+
+                    return View(consulta);
+                }
+
+                var solicitud = new SolicitudMedica
+                {
+                    PacienteId = consulta.PacienteId,
+                    FechaSolicitud = DateTime.Now,
+                    Motivo = consulta.MotivoReferencia ?? "",
+                    Observaciones = consulta.Observaciones,
+                    Estado = "Pendiente de Fundación",
+                    Especialidad = consulta.EspecialidadRequerida
+                };
+
+                _context.SolicitudesMedicas.Add(solicitud);
+            }
+
             await _context.SaveChangesAsync();
 
-            if (!consulta.RequiereEspecialista)
+            if (consulta.RequiereEspecialista)
             {
                 TempData["Exito"] =
-                    "La consulta médica fue registrada correctamente.";
-
-                return RedirectToAction(
-                    "Index",
-                    "Dashboard"
-                );
+                    "La consulta fue guardada y la solicitud médica fue enviada a Fundación.";
+            }
+            else
+            {
+                TempData["Exito"] =
+                    "La consulta médica fue guardada correctamente.";
             }
 
             return RedirectToAction(
-                "Crear",
-                "Solicitudes",
-                new
-                {
-                    pacienteId = consulta.PacienteId,
-                    especialidad = consulta.EspecialidadRequerida,
-                    motivo = consulta.MotivoReferencia
-                }
+                "Index",
+                "Dashboard"
             );
         }
     }

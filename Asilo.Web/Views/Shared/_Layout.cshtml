@@ -29,22 +29,32 @@
                                 @User.Identity.Name
                             </div>
 
-                            <div class="text-muted"
-                                 style="font-size: 0.75rem;">
-                                Administrador
-                            </div>
+                            @{
+    var rolUsuario =
+        User.Claims
+            .FirstOrDefault(c =>
+                c.Type == System.Security.Claims.ClaimTypes.Role)
+            ?.Value
+        ?? "Sin rol";
+}
+
+<div class="text-muted"
+     style="font-size: 0.75rem;">
+    @rolUsuario
+</div>
+
                         </div>
 
-                        <form asp-controller="Account"
-                              asp-action="Logout"
-                              method="post">
+                     <form asp-controller="Login"
+      asp-action="CerrarSesion"
+      method="post">
 
-                            <button type="submit"
-                                    class="btn btn-outline-danger btn-sm">
-                                Cerrar sesión
-                            </button>
+    <button type="submit"
+            class="btn btn-outline-danger btn-sm">
+        Cerrar sesión
+    </button>
 
-                        </form>
+</form>
 
                     </div>
                 }

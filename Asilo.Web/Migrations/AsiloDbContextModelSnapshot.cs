@@ -265,11 +265,24 @@ namespace Asilo.Web.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("ContenidoPresentacion")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<string>("Dosis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("DosisPorToma")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<string>("Duracion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DuracionDias")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FormaFarmaceutica")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -288,8 +301,23 @@ namespace Asilo.Web.Migrations
                     b.Property<decimal>("PrecioUnitario")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<string>("Presentacion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("RecetaId")
                         .HasColumnType("int");
+
+                    b.Property<int>("TomasPorDia")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnidadDosis")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnidadPresentacion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -384,6 +412,9 @@ namespace Asilo.Web.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Correo")
                         .IsRequired()
@@ -592,6 +623,10 @@ namespace Asilo.Web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Referencia")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegistradoPor")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

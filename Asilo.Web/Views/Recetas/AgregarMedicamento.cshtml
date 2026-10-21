@@ -3,19 +3,27 @@
 @{
     ViewData["Title"] = "Agregar medicamento";
 
-    var receta = ViewBag.Receta as Asilo.Web.Models.Receta;
+    var receta =
+        ViewBag.Receta as Asilo.Web.Models.Receta;
 }
 
 <div class="container mt-4 mb-5">
 
+    <!-- ENCABEZADO -->
+
     <div class="mb-4">
-        <h2 class="mb-1">Agregar medicamento</h2>
+        <h2 class="mb-1">
+            Agregar medicamento
+        </h2>
 
         <p class="text-muted mb-0">
-            Registre el medicamento indicado para el paciente.
+            Registre la dosis, frecuencia, duración y presentación
+            indicada para el paciente.
         </p>
     </div>
 
+
+    <!-- DATOS DE LA RECETA -->
 
     <div class="card shadow-sm border-0 mb-4">
 
@@ -35,7 +43,7 @@
 
                 <div class="col-md-6">
                     <small class="text-muted d-block">
-                        Médico
+                        Médico especialista
                     </small>
 
                     <strong>
@@ -50,6 +58,8 @@
     </div>
 
 
+    <!-- FORMULARIO -->
+
     <div class="card shadow-sm border-0">
 
         <div class="card-body">
@@ -60,8 +70,14 @@
                 <input type="hidden"
                        asp-for="RecetaId" />
 
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
 
-                <div class="mb-3">
+
+                <!-- MEDICAMENTO -->
+
+                <div class="mb-4">
 
                     <label asp-for="Medicamento"
                            class="form-label">
@@ -70,29 +86,105 @@
 
                     <input asp-for="Medicamento"
                            class="form-control"
-                           placeholder="Ej. Omeprazol" />
+                           placeholder="Ej. Acetaminofén 500 mg" />
 
                     <span asp-validation-for="Medicamento"
+                          class="text-danger">
+                    </span>
+
+                    <small class="text-muted">
+                        Incluya la concentración cuando corresponda.
+                    </small>
+
+                </div>
+
+
+                <!-- FORMA FARMACÉUTICA -->
+
+                <div class="mb-4">
+
+                    <label asp-for="FormaFarmaceutica"
+                           class="form-label">
+                        Forma farmacéutica
+                    </label>
+
+                    <select asp-for="FormaFarmaceutica"
+                            id="FormaFarmaceutica"
+                            class="form-select">
+
+                        <option value="">
+                            Seleccione...
+                        </option>
+
+                        <option value="Tableta">
+                            Tableta
+                        </option>
+
+                        <option value="Cápsula">
+                            Cápsula
+                        </option>
+
+                        <option value="Jarabe">
+                            Jarabe
+                        </option>
+
+                        <option value="Solución bebible">
+                            Solución bebible
+                        </option>
+
+                        <option value="Ampolla">
+                            Ampolla
+                        </option>
+
+                        <option value="Inyección">
+                            Inyección
+                        </option>
+
+                        <option value="Gotas">
+                            Gotas
+                        </option>
+
+                        <option value="Crema">
+                            Crema
+                        </option>
+
+                        <option value="Otro">
+                            Otro
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="FormaFarmaceutica"
                           class="text-danger">
                     </span>
 
                 </div>
 
 
+                <!-- DOSIS -->
+
+                <h5 class="mt-4 mb-3">
+                    Dosificación
+                </h5>
+
                 <div class="row">
 
                     <div class="col-md-4 mb-3">
 
-                        <label asp-for="Dosis"
+                        <label asp-for="DosisPorToma"
                                class="form-label">
-                            Dosis
+                            Cantidad por toma
                         </label>
 
-                        <input asp-for="Dosis"
+                        <input asp-for="DosisPorToma"
+                               id="DosisPorToma"
+                               type="number"
+                               step="0.01"
+                               min="0.01"
                                class="form-control"
-                               placeholder="Ej. 20 mg" />
+                               placeholder="Ej. 1" />
 
-                        <span asp-validation-for="Dosis"
+                        <span asp-validation-for="DosisPorToma"
                               class="text-danger">
                         </span>
 
@@ -101,16 +193,50 @@
 
                     <div class="col-md-4 mb-3">
 
-                        <label asp-for="Frecuencia"
+                        <label asp-for="UnidadDosis"
                                class="form-label">
-                            Frecuencia
+                            Unidad de la dosis
                         </label>
 
-                        <input asp-for="Frecuencia"
-                               class="form-control"
-                               placeholder="Ej. Cada 8 horas" />
+                        <select asp-for="UnidadDosis"
+                                id="UnidadDosis"
+                                class="form-select">
 
-                        <span asp-validation-for="Frecuencia"
+                            <option value="">
+                                Seleccione...
+                            </option>
+
+                            <option value="tableta">
+                                Tableta
+                            </option>
+
+                            <option value="cápsula">
+                                Cápsula
+                            </option>
+
+                            <option value="ml">
+                                ml
+                            </option>
+
+                            <option value="ampolla">
+                                Ampolla
+                            </option>
+
+                            <option value="inyección">
+                                Inyección
+                            </option>
+
+                            <option value="gota">
+                                Gota
+                            </option>
+
+                            <option value="aplicación">
+                                Aplicación
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="UnidadDosis"
                               class="text-danger">
                         </span>
 
@@ -119,21 +245,223 @@
 
                     <div class="col-md-4 mb-3">
 
-                        <label asp-for="Duracion"
+                        <label asp-for="TomasPorDia"
                                class="form-label">
-                            Duración
+                            Tomas o aplicaciones por día
                         </label>
 
-                        <input asp-for="Duracion"
+                        <input asp-for="TomasPorDia"
+                               id="TomasPorDia"
+                               type="number"
+                               min="1"
                                class="form-control"
-                               placeholder="Ej. 7 días" />
+                               placeholder="Ej. 3" />
+
+                        <span asp-validation-for="TomasPorDia"
+                              class="text-danger">
+                        </span>
 
                     </div>
 
                 </div>
 
 
-                <div class="mb-4">
+                <div class="row">
+
+                    <div class="col-md-4 mb-4">
+
+                        <label asp-for="DuracionDias"
+                               class="form-label">
+                            Duración en días
+                        </label>
+
+                        <input asp-for="DuracionDias"
+                               id="DuracionDias"
+                               type="number"
+                               min="1"
+                               class="form-control"
+                               placeholder="Ej. 7" />
+
+                        <span asp-validation-for="DuracionDias"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRESENTACIÓN -->
+
+                <h5 class="mt-2 mb-3">
+                    Presentación del medicamento
+                </h5>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-3">
+
+                        <label asp-for="Presentacion"
+                               class="form-label">
+                            Presentación
+                        </label>
+
+                        <select asp-for="Presentacion"
+                                id="Presentacion"
+                                class="form-select">
+
+                            <option value="">
+                                Seleccione...
+                            </option>
+
+                            <option value="Unidad">
+                                Unidad
+                            </option>
+
+                            <option value="Blíster">
+                                Blíster
+                            </option>
+
+                            <option value="Caja">
+                                Caja
+                            </option>
+
+                            <option value="Frasco">
+                                Frasco
+                            </option>
+
+                            <option value="Ampolla">
+                                Ampolla
+                            </option>
+
+                            <option value="Vial">
+                                Vial
+                            </option>
+
+                            <option value="Tubo">
+                                Tubo
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="Presentacion"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="col-md-4 mb-3">
+
+                        <label asp-for="ContenidoPresentacion"
+                               class="form-label">
+                            Contenido por presentación
+                        </label>
+
+                        <input asp-for="ContenidoPresentacion"
+                               id="ContenidoPresentacion"
+                               type="number"
+                               step="0.01"
+                               min="0.01"
+                               class="form-control"
+                               placeholder="Ej. 120" />
+
+                        <span asp-validation-for="ContenidoPresentacion"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="col-md-4 mb-3">
+
+                        <label asp-for="UnidadPresentacion"
+                               class="form-label">
+                            Unidad del contenido
+                        </label>
+
+                        <select asp-for="UnidadPresentacion"
+                                id="UnidadPresentacion"
+                                class="form-select">
+
+                            <option value="">
+                                Seleccione...
+                            </option>
+
+                            <option value="tabletas">
+                                Tabletas
+                            </option>
+
+                            <option value="cápsulas">
+                                Cápsulas
+                            </option>
+
+                            <option value="ml">
+                                ml
+                            </option>
+
+                            <option value="ampollas">
+                                Ampollas
+                            </option>
+
+                            <option value="inyecciones">
+                                Inyecciones
+                            </option>
+
+                            <option value="gotas">
+                                Gotas
+                            </option>
+
+                            <option value="aplicaciones">
+                                Aplicaciones
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="UnidadPresentacion"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CÁLCULO PRELIMINAR -->
+
+                <div class="alert alert-info mt-3"
+                     id="CalculoMedicamento"
+                     style="display:none;">
+
+                    <strong>
+                        Cálculo estimado:
+                    </strong>
+
+                    <div class="mt-2">
+                        Cantidad total necesaria:
+                        <span id="CantidadTotal">
+                            0
+                        </span>
+                    </div>
+
+                    <div>
+                        Presentaciones sugeridas para entregar:
+                        <strong id="CantidadSugerida">
+                            0
+                        </strong>
+                    </div>
+
+                    <small class="text-muted d-block mt-2">
+                        Este cálculo es una ayuda para Farmacia.
+                        La dosis médica no es modificada por el sistema.
+                    </small>
+
+                </div>
+
+
+                <!-- INDICACIONES -->
+
+                <div class="mb-4 mt-4">
 
                     <label asp-for="Indicaciones"
                            class="form-label">
@@ -143,10 +471,16 @@
                     <textarea asp-for="Indicaciones"
                               class="form-control"
                               rows="3"
-                              placeholder="Ej. Tomar después de los alimentos"></textarea>
+                              placeholder="Ej. Administrar después de los alimentos"></textarea>
+
+                    <span asp-validation-for="Indicaciones"
+                          class="text-danger">
+                    </span>
 
                 </div>
 
+
+                <!-- BOTONES -->
 
                 <div class="d-flex gap-2">
 
@@ -174,3 +508,119 @@
     </div>
 
 </div>
+
+
+@section Scripts
+{
+    <script>
+        function calcularCantidad() {
+
+            const dosis =
+                parseFloat(
+                    document.getElementById("DosisPorToma").value
+                ) || 0;
+
+            const tomas =
+                parseInt(
+                    document.getElementById("TomasPorDia").value
+                ) || 0;
+
+            const dias =
+                parseInt(
+                    document.getElementById("DuracionDias").value
+                ) || 0;
+
+            const contenido =
+                parseFloat(
+                    document.getElementById("ContenidoPresentacion").value
+                ) || 0;
+
+            const unidadDosis =
+                document.getElementById("UnidadDosis").value;
+
+            const presentacion =
+                document.getElementById("Presentacion").value;
+
+            const cantidadTotal =
+                dosis * tomas * dias;
+
+            let cantidadSugerida = 0;
+
+            if (contenido > 0) {
+                cantidadSugerida =
+                    Math.ceil(
+                        cantidadTotal / contenido
+                    );
+            }
+
+            if (cantidadTotal > 0 &&
+                contenido > 0) {
+
+                document.getElementById(
+                    "CalculoMedicamento"
+                ).style.display = "block";
+
+                document.getElementById(
+                    "CantidadTotal"
+                ).innerText =
+                    cantidadTotal.toFixed(2) +
+                    " " +
+                    unidadDosis;
+
+                document.getElementById(
+                    "CantidadSugerida"
+                ).innerText =
+                    cantidadSugerida +
+                    " " +
+                    presentacion +
+                    (cantidadSugerida != 1 ? "s" : "");
+            }
+            else {
+
+                document.getElementById(
+                    "CalculoMedicamento"
+                ).style.display = "none";
+            }
+        }
+
+
+        document.getElementById("DosisPorToma")
+            .addEventListener(
+                "input",
+                calcularCantidad
+            );
+
+        document.getElementById("TomasPorDia")
+            .addEventListener(
+                "input",
+                calcularCantidad
+            );
+
+        document.getElementById("DuracionDias")
+            .addEventListener(
+                "input",
+                calcularCantidad
+            );
+
+        document.getElementById("ContenidoPresentacion")
+            .addEventListener(
+                "input",
+                calcularCantidad
+            );
+
+        document.getElementById("UnidadDosis")
+            .addEventListener(
+                "change",
+                calcularCantidad
+            );
+
+        document.getElementById("Presentacion")
+            .addEventListener(
+                "change",
+                calcularCantidad
+            );
+
+
+        calcularCantidad();
+    </script>
+}

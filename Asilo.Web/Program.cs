@@ -1,10 +1,14 @@
 using Asilo.Web.Data;
-using Microsoft.EntityFrameworkCore;
+using Asilo.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
+QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ReciboPdfService>();
 
 builder.Services.AddAuthentication(
     CookieAuthenticationDefaults.AuthenticationScheme)
@@ -53,5 +57,12 @@ app.MapControllerRoute(
     pattern: "{controller=Dashboard}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+//using (var scope = app.Services.CreateScope())
+//{
+  //  var context = scope.ServiceProvider
+    //    .GetRequiredService<AsiloDbContext>();
+
+    //await DbSeeder.RecrearDatosDemoAsync(context);
+//}
 
 app.Run();

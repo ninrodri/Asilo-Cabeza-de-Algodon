@@ -1,15 +1,13 @@
 ﻿using Asilo.Web.Data;
 using Asilo.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Asilo.Web.Controllers
 {
-
-    [Authorize(Roles = "Administrador,Personal administrativo")]
+    [Authorize]
     public class AncianosController : Controller
-
     {
         private readonly AsiloDbContext _context;
 
@@ -18,6 +16,12 @@ namespace Asilo.Web.Controllers
             _context = context;
         }
 
+        // =====================================================
+        // LISTADO DE INTERNOS
+        // =====================================================
+
+        [Authorize(Roles =
+            "Administrador,Personal administrativo,Médico general,Médico especialista,Enfermero")]
         public async Task<IActionResult> Index(string? buscar)
         {
             var consulta = _context.Pacientes.AsQueryable();
@@ -41,7 +45,13 @@ namespace Asilo.Web.Controllers
             return View(pacientes);
         }
 
+        // =====================================================
+        // DETALLE DEL INTERNO
+        // =====================================================
+
         [HttpGet]
+        [Authorize(Roles =
+            "Administrador,Personal administrativo,Médico general,Médico especialista,Enfermero")]
         public async Task<IActionResult> Detalle(int id)
         {
             var paciente = await _context.Pacientes
@@ -56,74 +66,27 @@ namespace Asilo.Web.Controllers
             {
                 return NotFound();
             }
+
             return View(paciente);
         }
 
+        // =====================================================
+        // REGISTRAR INTERNO
+        // SOLO ADMINISTRACIÓN
+        // =====================================================
 
         [HttpGet]
+        [Authorize(Roles =
+            "Administrador,Personal administrativo")]
         public IActionResult Registrar()
         {
             return View();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Editar(int id)
-        {
-            var paciente = await _context.Pacientes.FindAsync(id);
-
-            if (paciente == null)
-            {
-                return NotFound();
-            }
-
-            return View(paciente);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Editar(Anciano anciano)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(anciano);
-            }
-
-            _context.Pacientes.Update(anciano);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Eliminar(int id)
-        {
-            var paciente = await _context.Pacientes.FindAsync(id);
-
-            if (paciente == null)
-            {
-                return NotFound();
-            }
-
-            return View(paciente);
-        }
-
-        [HttpPost, ActionName("Eliminar")]
-        public async Task<IActionResult> EliminarConfirmado(int id)
-        {
-            var paciente = await _context.Pacientes.FindAsync(id);
-
-            if (paciente == null)
-            {
-                return NotFound();
-            }
-
-            _context.Pacientes.Remove(paciente);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles =
+            "Administrador,Personal administrativo")]
         public async Task<IActionResult> Registrar(Anciano anciano)
         {
             if (!ModelState.IsValid)
@@ -147,9 +110,91 @@ namespace Asilo.Web.Controllers
             }
 
             _context.Pacientes.Add(anciano);
+
             await _context.SaveChangesAsync();
 
             return View("Confirmacion", anciano);
+        }
+
+        // =====================================================
+        // EDITAR INTERNO
+        // SOLO ADMINISTRACIÓN
+        // =====================================================
+
+        [HttpGet]
+        [Authorize(Roles =
+            "Administrador,Personal administrativo")]
+        public async Task<IActionResult> Editar(int id)
+        {
+            var paciente =
+                await _context.Pacientes.FindAsync(id);
+
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+
+            return View(paciente);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles =
+            "Administrador,Personal administrativo")]
+        public async Task<IActionResult> Editar(Anciano anciano)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(anciano);
+            }
+
+            _context.Pacientes.Update(anciano);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        // =====================================================
+        // ELIMINAR INTERNO
+        // SOLO ADMINISTRACIÓN
+        // =====================================================
+
+        [HttpGet]
+        [Authorize(Roles =
+            "Administrador,Personal administrativo")]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            var paciente =
+                await _context.Pacientes.FindAsync(id);
+
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+
+            return View(paciente);
+        }
+
+        [HttpPost, ActionName("Eliminar")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles =
+            "Administrador,Personal administrativo")]
+        public async Task<IActionResult> EliminarConfirmado(int id)
+        {
+            var paciente =
+                await _context.Pacientes.FindAsync(id);
+
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+
+            _context.Pacientes.Remove(paciente);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
     }
 }

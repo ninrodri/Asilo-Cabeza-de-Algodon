@@ -3,10 +3,11 @@ using Asilo.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Asilo.Web.Controllers
 {
-    [Authorize(Roles = "Administrador,Médico general,Médico especialista")]
+    [Authorize]
     public class RecetasController : Controller
     {
         private readonly AsiloDbContext _context;
@@ -16,11 +17,13 @@ namespace Asilo.Web.Controllers
             _context = context;
         }
 
+
         // =========================================================
         // CREAR RECETA
         // =========================================================
 
         [HttpGet]
+        [Authorize(Roles = "Administrador,Médico especialista")]
         public async Task<IActionResult> Crear(int visitaId)
         {
             var visita = await _context.VisitasMedicas
@@ -30,6 +33,18 @@ namespace Asilo.Web.Controllers
             if (visita == null)
             {
                 return NotFound();
+            }
+
+            // Validar que el especialista actual sea
+            // el responsable de la visita.
+            if (User.IsInRole("Médico especialista"))
+            {
+                var usuarioActual = User.Identity?.Name;
+
+                if (visita.Medico != usuarioActual)
+                {
+                    return Forbid();
+                }
             }
 
             var recetaExistente = await _context.Recetas
@@ -61,27 +76,56 @@ namespace Asilo.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Médico especialista")]
         public async Task<IActionResult> Crear(Receta receta)
         {
-            // Ya no utilizamos IndicacionesGenerales
+            var visita = await _context.VisitasMedicas
+                .Include(v => v.Paciente)
+                .FirstOrDefaultAsync(v =>
+                    v.Id == receta.VisitaMedicaId);
+
+            if (visita == null)
+            {
+                return NotFound();
+            }
+
+            if (User.IsInRole("Médico especialista"))
+            {
+                var usuarioActual = User.Identity?.Name;
+
+                if (visita.Medico != usuarioActual)
+                {
+                    return Forbid();
+                }
+            }
+
+            receta.PacienteId = visita.PacienteId;
+            receta.Medico = visita.Medico;
             receta.IndicacionesGenerales = "";
 
             ModelState.Remove(
                 nameof(receta.IndicacionesGenerales)
             );
 
+            ModelState.Remove(
+                nameof(receta.Medico)
+            );
+
+            ModelState.Remove(
+                nameof(receta.Paciente)
+            );
+
             if (!ModelState.IsValid)
             {
-                receta.Paciente = await _context.Pacientes
-                    .FirstOrDefaultAsync(p =>
-                        p.Id == receta.PacienteId);
+                receta.Paciente = visita.Paciente;
 
                 return View(receta);
             }
 
             var recetaExistente = await _context.Recetas
                 .FirstOrDefaultAsync(r =>
-                    r.VisitaMedicaId == receta.VisitaMedicaId);
+                    r.VisitaMedicaId ==
+                    receta.VisitaMedicaId);
 
             if (recetaExistente != null)
             {
@@ -113,7 +157,9 @@ namespace Asilo.Web.Controllers
         // =========================================================
 
         [HttpGet]
-        public async Task<IActionResult> AgregarMedicamento(int recetaId)
+        [Authorize(Roles = "Administrador,Médico especialista")]
+        public async Task<IActionResult> AgregarMedicamento(
+            int recetaId)
         {
             var receta = await _context.Recetas
                 .Include(r => r.Paciente)
@@ -126,8 +172,18 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            // Una receta finalizada ya no se modifica
-            if (receta.Estado == "Emitida")
+            if (User.IsInRole("Médico especialista"))
+            {
+                var usuarioActual = User.Identity?.Name;
+
+                if (receta.Medico != usuarioActual)
+                {
+                    return Forbid();
+                }
+            }
+
+            if (receta.Estado == "Emitida" ||
+                receta.Estado == "Entregada")
             {
                 TempData["Aviso"] =
                     "La receta ya fue finalizada y no puede modificarse.";
@@ -142,7 +198,13 @@ namespace Asilo.Web.Controllers
 
             var detalle = new DetalleReceta
             {
-                RecetaId = receta.Id
+                RecetaId = receta.Id,
+
+                // Valores iniciales útiles
+                DosisPorToma = 1,
+                TomasPorDia = 1,
+                DuracionDias = 1,
+                ContenidoPresentacion = 1
             };
 
             return View(detalle);
@@ -151,6 +213,7 @@ namespace Asilo.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Médico especialista")]
         public async Task<IActionResult> AgregarMedicamento(
             DetalleReceta detalle)
         {
@@ -164,7 +227,18 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            if (receta.Estado == "Emitida")
+            if (User.IsInRole("Médico especialista"))
+            {
+                var usuarioActual = User.Identity?.Name;
+
+                if (receta.Medico != usuarioActual)
+                {
+                    return Forbid();
+                }
+            }
+
+            if (receta.Estado == "Emitida" ||
+                receta.Estado == "Entregada")
             {
                 TempData["Aviso"] =
                     "La receta ya fue finalizada y no puede modificarse.";
@@ -175,12 +249,69 @@ namespace Asilo.Web.Controllers
                 );
             }
 
+            // Validaciones adicionales
+            if (detalle.DosisPorToma <= 0)
+            {
+                ModelState.AddModelError(
+                    nameof(detalle.DosisPorToma),
+                    "La cantidad por toma debe ser mayor que cero."
+                );
+            }
+
+            if (detalle.TomasPorDia <= 0)
+            {
+                ModelState.AddModelError(
+                    nameof(detalle.TomasPorDia),
+                    "Las tomas por día deben ser mayores que cero."
+                );
+            }
+
+            if (detalle.DuracionDias <= 0)
+            {
+                ModelState.AddModelError(
+                    nameof(detalle.DuracionDias),
+                    "La duración debe ser mayor que cero."
+                );
+            }
+
+            if (detalle.ContenidoPresentacion <= 0)
+            {
+                ModelState.AddModelError(
+                    nameof(detalle.ContenidoPresentacion),
+                    "El contenido de la presentación debe ser mayor que cero."
+                );
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Receta = receta;
 
                 return View(detalle);
             }
+
+
+            // =====================================================
+            // GENERAR LOS TEXTOS LEGIBLES
+            // =====================================================
+
+            detalle.Dosis =
+                $"{detalle.DosisPorToma:0.##} {detalle.UnidadDosis}";
+
+            detalle.Frecuencia =
+                detalle.TomasPorDia == 1
+                ? "1 vez al día"
+                : $"{detalle.TomasPorDia} veces al día";
+
+            detalle.Duracion =
+                detalle.DuracionDias == 1
+                ? "1 día"
+                : $"{detalle.DuracionDias} días";
+
+
+            // Farmacia todavía no ha entregado nada.
+            detalle.Cantidad = 0;
+            detalle.PrecioUnitario = 0;
+
 
             _context.DetallesReceta.Add(detalle);
 
@@ -202,6 +333,7 @@ namespace Asilo.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Médico especialista")]
         public async Task<IActionResult> Finalizar(int id)
         {
             var receta = await _context.Recetas
@@ -214,7 +346,18 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            if (receta.Estado == "Emitida")
+            if (User.IsInRole("Médico especialista"))
+            {
+                var usuarioActual = User.Identity?.Name;
+
+                if (receta.Medico != usuarioActual)
+                {
+                    return Forbid();
+                }
+            }
+
+            if (receta.Estado == "Emitida" ||
+                receta.Estado == "Entregada")
             {
                 TempData["Aviso"] =
                     "Esta receta ya fue finalizada.";
@@ -255,6 +398,9 @@ namespace Asilo.Web.Controllers
         // =========================================================
 
         [HttpGet]
+        [Authorize(
+            Roles =
+            "Administrador,Médico general,Médico especialista,Farmacia")]
         public async Task<IActionResult> Detalle(int id)
         {
             var receta = await _context.Recetas
@@ -277,6 +423,9 @@ namespace Asilo.Web.Controllers
         // =========================================================
 
         [HttpGet]
+        [Authorize(
+            Roles =
+            "Administrador,Médico general,Médico especialista")]
         public async Task<IActionResult> MedicamentosPorPaciente(
             int? pacienteId,
             DateTime? fechaInicio,
@@ -287,6 +436,7 @@ namespace Asilo.Web.Controllers
                 .ToListAsync();
 
             ViewBag.PacienteId = pacienteId;
+
             ViewBag.FechaInicio =
                 fechaInicio?.ToString("yyyy-MM-dd");
 

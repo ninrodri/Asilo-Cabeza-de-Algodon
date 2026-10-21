@@ -16,36 +16,67 @@ namespace Asilo.Web.Controllers
             _context = context;
         }
 
+        // =========================================================
+        // LISTADO
+        // =========================================================
+
         public async Task<IActionResult> Index()
         {
             var familiares = await _context.Familiares
                 .Include(f => f.Paciente)
+                .OrderByDescending(f => f.Activo)
+                .ThenBy(f => f.NombreCompleto)
                 .ToListAsync();
 
             return View(familiares);
         }
 
+
+        // =========================================================
+        // REGISTRAR
+        // =========================================================
+
         [HttpGet]
         public async Task<IActionResult> Registrar()
         {
-            ViewBag.Pacientes = await _context.Pacientes.ToListAsync();
+            ViewBag.Pacientes = await _context.Pacientes
+                .OrderBy(p => p.NombreCompleto)
+                .ToListAsync();
+
             return View();
         }
 
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registrar(Familiar familiar)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Pacientes = await _context.Pacientes.ToListAsync();
+                ViewBag.Pacientes = await _context.Pacientes
+                    .OrderBy(p => p.NombreCompleto)
+                    .ToListAsync();
+
                 return View(familiar);
             }
 
+            // Todo familiar nuevo inicia activo
+            familiar.Activo = true;
+
             _context.Familiares.Add(familiar);
+
             await _context.SaveChangesAsync();
+
+            TempData["Exito"] =
+                "El familiar fue registrado correctamente.";
 
             return RedirectToAction("Index");
         }
+
+
+        // =========================================================
+        // EDITAR
+        // =========================================================
 
         [HttpGet]
         public async Task<IActionResult> Editar(int id)
@@ -58,17 +89,24 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            ViewBag.Pacientes = await _context.Pacientes.ToListAsync();
+            ViewBag.Pacientes = await _context.Pacientes
+                .OrderBy(p => p.NombreCompleto)
+                .ToListAsync();
 
             return View(familiar);
         }
 
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(Familiar familiar)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Pacientes = await _context.Pacientes.ToListAsync();
+                ViewBag.Pacientes = await _context.Pacientes
+                    .OrderBy(p => p.NombreCompleto)
+                    .ToListAsync();
+
                 return View(familiar);
             }
 
@@ -80,23 +118,45 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            familiarExistente.NombreCompleto = familiar.NombreCompleto;
-            familiarExistente.Parentesco = familiar.Parentesco;
-            familiarExistente.Telefono = familiar.Telefono;
-            familiarExistente.Correo = familiar.Correo;
-            familiarExistente.Direccion = familiar.Direccion;
-            familiarExistente.PacienteId = familiar.PacienteId;
+            familiarExistente.NombreCompleto =
+                familiar.NombreCompleto;
+
+            familiarExistente.Parentesco =
+                familiar.Parentesco;
+
+            familiarExistente.Telefono =
+                familiar.Telefono;
+
+            familiarExistente.Correo =
+                familiar.Correo;
+
+            familiarExistente.Direccion =
+                familiar.Direccion;
+
+            familiarExistente.PacienteId =
+                familiar.PacienteId;
+
+            // Importante:
+            // no modificamos Activo desde Editar.
 
             await _context.SaveChangesAsync();
+
+            TempData["Exito"] =
+                "Los datos del familiar fueron actualizados.";
 
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Eliminar(int id)
+
+        // =========================================================
+        // DESACTIVAR
+        // =========================================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Desactivar(int id)
         {
             var familiar = await _context.Familiares
-                .Include(f => f.Paciente)
                 .FirstOrDefaultAsync(f => f.Id == id);
 
             if (familiar == null)
@@ -104,11 +164,32 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            return View(familiar);
+            if (!familiar.Activo)
+            {
+                TempData["Aviso"] =
+                    "El familiar ya se encuentra inactivo.";
+
+                return RedirectToAction("Index");
+            }
+
+            familiar.Activo = false;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Exito"] =
+                "El familiar fue desactivado. Su historial se conserva.";
+
+            return RedirectToAction("Index");
         }
 
-        [HttpPost, ActionName("Eliminar")]
-        public async Task<IActionResult> ConfirmarEliminar(int id)
+
+        // =========================================================
+        // REACTIVAR
+        // =========================================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reactivar(int id)
         {
             var familiar = await _context.Familiares
                 .FirstOrDefaultAsync(f => f.Id == id);
@@ -118,8 +199,20 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            _context.Familiares.Remove(familiar);
+            if (familiar.Activo)
+            {
+                TempData["Aviso"] =
+                    "El familiar ya se encuentra activo.";
+
+                return RedirectToAction("Index");
+            }
+
+            familiar.Activo = true;
+
             await _context.SaveChangesAsync();
+
+            TempData["Exito"] =
+                "El familiar fue reactivado correctamente.";
 
             return RedirectToAction("Index");
         }

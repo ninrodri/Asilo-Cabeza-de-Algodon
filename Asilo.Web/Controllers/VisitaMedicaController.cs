@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Asilo.Web.Controllers
 {
-    [Authorize(Roles = "Administrador,Médico general,Médico especialista")]
+    [Authorize]
     public class VisitaMedicaController : Controller
     {
         private readonly AsiloDbContext _context;
@@ -16,11 +16,18 @@ namespace Asilo.Web.Controllers
             _context = context;
         }
 
+        // =====================================================
+        // CREAR VISITA ESPECIALIZADA
+        // Solo especialista asignado o administrador
+        // =====================================================
+
         [HttpGet]
+        [Authorize(Roles = "Administrador,Médico especialista")]
         public async Task<IActionResult> Crear(int solicitudId)
         {
             var solicitud = await _context.SolicitudesMedicas
                 .Include(s => s.Paciente)
+                .Include(s => s.MedicoEspecialista)
                 .FirstOrDefaultAsync(s => s.Id == solicitudId);
 
             if (solicitud == null)
@@ -28,25 +35,30 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            var visitaExistente = await _context.VisitasMedicas
-                .AnyAsync(v => v.SolicitudMedicaId == solicitudId);
-
-            if (visitaExistente)
+            if (solicitud.Estado != "Programada")
             {
                 TempData["Aviso"] =
-                    "Esta solicitud ya tiene una visita médica registrada.";
+                    "La solicitud debe estar programada antes de registrar la visita.";
 
                 return RedirectToAction("Index", "Solicitudes");
             }
 
-            string medico = "";
-
-            if (solicitud.MedicoEspecialistaId.HasValue)
+            if (!User.IsInRole("Administrador") &&
+                solicitud.MedicoEspecialista?.NombreUsuario != User.Identity?.Name)
             {
-                medico = await _context.Usuarios
-                    .Where(u => u.Id == solicitud.MedicoEspecialistaId.Value)
-                    .Select(u => u.NombreUsuario)
-                    .FirstOrDefaultAsync() ?? "";
+                return Forbid();
+            }
+
+            var visitaExistente = await _context.VisitasMedicas
+                .FirstOrDefaultAsync(v =>
+                    v.SolicitudMedicaId == solicitudId);
+
+            if (visitaExistente != null)
+            {
+                return RedirectToAction(
+                    "Ver",
+                    new { id = visitaExistente.Id }
+                );
             }
 
             var visita = new VisitaMedica
@@ -54,7 +66,7 @@ namespace Asilo.Web.Controllers
                 SolicitudMedicaId = solicitud.Id,
                 PacienteId = solicitud.PacienteId,
                 Paciente = solicitud.Paciente,
-                Medico = medico
+                Medico = solicitud.MedicoEspecialista?.NombreUsuario ?? ""
             };
 
             return View(visita);
@@ -62,9 +74,11 @@ namespace Asilo.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador,Médico especialista")]
         public async Task<IActionResult> Crear(VisitaMedica visita)
         {
             var solicitud = await _context.SolicitudesMedicas
+                .Include(s => s.MedicoEspecialista)
                 .FirstOrDefaultAsync(s =>
                     s.Id == visita.SolicitudMedicaId);
 
@@ -73,18 +87,15 @@ namespace Asilo.Web.Controllers
                 return NotFound();
             }
 
-            // El médico se obtiene desde la solicitud,
-            // no desde lo que mande el navegador.
-            if (solicitud.MedicoEspecialistaId.HasValue)
+            if (!User.IsInRole("Administrador") &&
+                solicitud.MedicoEspecialista?.NombreUsuario != User.Identity?.Name)
             {
-                visita.Medico = await _context.Usuarios
-                    .Where(u => u.Id == solicitud.MedicoEspecialistaId.Value)
-                    .Select(u => u.NombreUsuario)
-                    .FirstOrDefaultAsync() ?? "";
+                return Forbid();
             }
 
-            // Quitamos la validación anterior de Medico
-            // porque acabamos de asignarlo desde la BD.
+            visita.Medico =
+                solicitud.MedicoEspecialista?.NombreUsuario ?? "";
+
             ModelState.Remove(nameof(visita.Medico));
 
             if (string.IsNullOrWhiteSpace(visita.Medico))
@@ -124,14 +135,10 @@ namespace Asilo.Web.Controllers
             {
                 PacienteId = visita.PacienteId,
                 Fecha = DateTime.Now,
-                TipoRegistro = "Visita médica",
-
+                TipoRegistro = "Visita médica especializada",
                 Descripcion =
                     $"Diagnóstico: {visita.Diagnostico}",
-
-                Observaciones =
-                    $"Observaciones: {visita.Observaciones}",
-
+                Observaciones = visita.Observaciones,
                 ProfesionalResponsable = visita.Medico
             };
 
@@ -141,18 +148,32 @@ namespace Asilo.Web.Controllers
 
             await _context.SaveChangesAsync();
 
+            TempData["Exito"] =
+                "La visita médica fue registrada correctamente.";
+
             return RedirectToAction(
                 "Ver",
                 new { id = visita.Id }
             );
         }
 
+
+        // =====================================================
+        // VER VISITA
+        // Médicos pueden consultar.
+        // =====================================================
+
         [HttpGet]
+        [Authorize(Roles =
+            "Administrador,Médico general,Médico especialista")]
         public async Task<IActionResult> Ver(int id)
         {
             var visita = await _context.VisitasMedicas
                 .Include(v => v.Paciente)
                 .Include(v => v.SolicitudMedica)
+                .Include(v => v.ExamenesLaboratorio)
+                .Include(v => v.Receta)
+                    .ThenInclude(r => r!.Detalles)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (visita == null)

@@ -60,11 +60,15 @@
 
             </div>
 
-            <a asp-action="Editar"
-               asp-route-id="@Model.Id"
-               class="btn btn-warning">
-                Editar datos
-            </a>
+            @if (User.IsInRole("Administrador") ||
+     User.IsInRole("Personal administrativo"))
+{
+    <a asp-action="Editar"
+       asp-route-id="@Model.Id"
+       class="btn btn-warning">
+        Editar datos
+    </a>
+}
 
         </div>
     </div>

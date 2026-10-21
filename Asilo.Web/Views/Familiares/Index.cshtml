@@ -4,29 +4,63 @@
     ViewData["Title"] = "Familiares";
 }
 
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
 
+    <!-- ENCABEZADO -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1>Familiares registrados</h1>
 
-            <p class="text-muted">
+        <div>
+            <h1 class="mb-1">
+                Familiares registrados
+            </h1>
+
+            <p class="text-muted mb-0">
                 Gestión de familiares responsables de los internos.
             </p>
         </div>
 
-        <a asp-action="Registrar"
-           class="btn btn-primary">
-            Registrar familiar
-        </a>
+        <div class="d-flex gap-2">
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Volver al menú principal
+            </a>
+
+            <a asp-action="Registrar"
+               class="btn btn-primary">
+                Registrar familiar
+            </a>
+
+        </div>
+
     </div>
 
+
+    <!-- MENSAJES -->
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    @if (TempData["Aviso"] != null)
+    {
+        <div class="alert alert-warning">
+            @TempData["Aviso"]
+        </div>
+    }
+
+
+    <!-- TABLA -->
     <div class="card shadow-sm">
+
         <div class="card-body">
 
             <div class="table-responsive">
 
-                <table class="table table-striped table-hover">
+                <table class="table table-striped table-hover align-middle">
 
                     <thead>
                         <tr>
@@ -36,6 +70,7 @@
                             <th>Teléfono</th>
                             <th>Correo</th>
                             <th>Interno</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -44,25 +79,96 @@
 
                         @foreach (var familiar in Model)
                         {
-                            <tr>
-                                <td>@familiar.Id</td>
-                                <td>@familiar.NombreCompleto</td>
-                                <td>@familiar.Parentesco</td>
-                                <td>@familiar.Telefono</td>
-                                <td>@familiar.Correo</td>
-                                <td>@familiar.Paciente?.NombreCompleto</td>
-                                <td>
-                                    <a asp-action="Editar"
-                                       asp-route-id="@familiar.Id"
-                                       class="btn btn-warning btn-sm">
-                                        Editar
-                                    </a>
+                            <tr class="@(!familiar.Activo ? "table-secondary" : "")">
 
-                                    <a asp-action="Eliminar"
-                                       asp-route-id="@familiar.Id"
-                                       class="btn btn-danger btn-sm">
-                                        Eliminar
-                                    </a>
+                                <td>
+                                    @familiar.Id
+                                </td>
+
+                                <td>
+                                    @familiar.NombreCompleto
+                                </td>
+
+                                <td>
+                                    @familiar.Parentesco
+                                </td>
+
+                                <td>
+                                    @familiar.Telefono
+                                </td>
+
+                                <td>
+                                    @familiar.Correo
+                                </td>
+
+                                <td>
+                                    @familiar.Paciente?.NombreCompleto
+                                </td>
+
+                                <td>
+
+                                    @if (familiar.Activo)
+                                    {
+                                        <span class="badge bg-success">
+                                            Activo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            Inactivo
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <div class="d-flex gap-1 flex-wrap">
+
+                                        @if (familiar.Activo)
+                                        {
+                                            <a asp-action="Editar"
+                                               asp-route-id="@familiar.Id"
+                                               class="btn btn-warning btn-sm">
+                                                Editar
+                                            </a>
+
+                                            <form asp-action="Desactivar"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@familiar.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-danger btn-sm"
+                                                        onclick="return confirm('¿Desea desactivar este familiar? El registro se conservará en el historial.');">
+                                                    Desactivar
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="Reactivar"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@familiar.Id" />
+
+                                                <button type="submit"
+                                                        class="btn btn-outline-success btn-sm">
+                                                    Reactivar
+                                                </button>
+
+                                            </form>
+                                        }
+
+                                    </div>
 
                                 </td>
 
@@ -76,6 +182,7 @@
             </div>
 
         </div>
+
     </div>
 
 </div>
