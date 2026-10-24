@@ -1,0 +1,182 @@
+﻿@model IEnumerable<Asilo.Web.Models.VisitaMedica>
+
+@{
+    ViewData["Title"] = "Medicamentos aplicados";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+
+        <div>
+            <h2>Medicamentos aplicados en visita médica</h2>
+
+            <p class="text-muted mb-0">
+                Seleccione una visita médica para registrar un medicamento
+                o tratamiento aplicado durante la atención del paciente.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a asp-action="Historial"
+               class="btn btn-outline-primary">
+                Ver historial
+            </a>
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Volver al menú principal
+            </a>
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-action="Index"
+                  class="row g-3 align-items-end">
+
+                <div class="col-md-8">
+
+                    <label class="form-label fw-semibold">
+                        Paciente
+                    </label>
+
+                    <select name="pacienteId"
+                            class="form-select">
+
+                        <option value="">
+                            Todos los pacientes
+                        </option>
+
+                        @foreach (var paciente in ViewBag.Pacientes)
+                        {
+                            if (ViewBag.PacienteId != null &&
+                                paciente.Id == (int)ViewBag.PacienteId)
+                            {
+                                <option value="@paciente.Id" selected>
+                                    @paciente.NombreCompleto
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@paciente.Id">
+                                    @paciente.NombreCompleto
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Filtrar
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No hay visitas médicas disponibles para los criterios seleccionados.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Médico</th>
+                        <th>Diagnóstico</th>
+                        <th>Tratamiento</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var visita in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @visita.FechaVisita.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @visita.Paciente?.NombreCompleto
+                            </td>
+
+                            <td>
+                                @visita.Medico
+                            </td>
+
+                            <td>
+                                @visita.Diagnostico
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrWhiteSpace(visita.Tratamiento)
+                                    ? "-"
+                                    : visita.Tratamiento)
+                            </td>
+
+                            <td>
+                                <a asp-action="Aplicar"
+                                   asp-route-id="@visita.Id"
+                                   class="btn btn-sm btn-primary">
+                                    Registrar aplicación
+                                </a>
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>

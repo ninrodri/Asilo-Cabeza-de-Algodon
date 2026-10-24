@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Asilo.Web.Controllers
 {
-    [Authorize(Roles = "Administrador,Médico general,Médico especialista")]
+    [Authorize]
     public class FichaMedicaController : Controller
     {
         private readonly AsiloDbContext _context;
@@ -16,8 +16,15 @@ namespace Asilo.Web.Controllers
             _context = context;
         }
 
+
+        // =========================================================
+        // VER FICHA
+        // Administrador, médicos y enfermero pueden consultar
+        // =========================================================
+
         [HttpGet]
-        public async Task<IActionResult> Ver(int pacienteId)
+        [Authorize(Roles = "Administrador,Médico general,Médico especialista,Enfermero")]
+        public async Task<IActionResult> Ver(int pacienteId, int? visitaId)
         {
             var ficha = await _context.FichasMedicas
                 .Include(f => f.Paciente)
@@ -25,24 +32,50 @@ namespace Asilo.Web.Controllers
 
             if (ficha == null)
             {
-                TempData["Aviso"] =
-                    "Este interno todavía no tiene una ficha médica registrada. Puede crearla a continuación.";
+                if (User.IsInRole("Enfermero"))
+                {
+                    TempData["Aviso"] =
+                        "El paciente no tiene ficha médica registrada.";
+
+                    if (visitaId.HasValue)
+                    {
+                        return RedirectToAction(
+                            "Ver",
+                            "VisitaMedica",
+                            new { id = visitaId.Value });
+                    }
+
+                    return RedirectToAction(
+                        "Detalle",
+                        "Ancianos",
+                        new { id = pacienteId });
+                }
 
                 return RedirectToAction(
                     "Crear",
-                    new { pacienteId = pacienteId }
-                );
+                    new { pacienteId });
             }
+
+            ViewBag.VisitaId = visitaId;
 
             return View(ficha);
         }
 
+
+        // =========================================================
+        // EDITAR FICHA
+        // Enfermero NO puede editar
+        // =========================================================
+
         [HttpGet]
+        [Authorize(
+            Roles = "Administrador,Médico general,Médico especialista")]
         public async Task<IActionResult> Editar(int id)
         {
             var ficha = await _context.FichasMedicas
                 .Include(f => f.Paciente)
-                .FirstOrDefaultAsync(f => f.Id == id);
+                .FirstOrDefaultAsync(f =>
+                    f.Id == id);
 
             if (ficha == null)
             {
@@ -52,46 +85,83 @@ namespace Asilo.Web.Controllers
             return View(ficha);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Editar(FichaMedica ficha)
+        [ValidateAntiForgeryToken]
+        [Authorize(
+            Roles = "Administrador,Médico general,Médico especialista")]
+        public async Task<IActionResult> Editar(
+            FichaMedica ficha)
         {
             if (!ModelState.IsValid)
             {
-                ficha.Paciente = await _context.Pacientes
-                    .FirstOrDefaultAsync(p => p.Id == ficha.PacienteId);
+                ficha.Paciente =
+                    await _context.Pacientes
+                        .FirstOrDefaultAsync(p =>
+                            p.Id == ficha.PacienteId);
 
                 return View(ficha);
             }
 
-            var fichaExistente = await _context.FichasMedicas
-                .FirstOrDefaultAsync(f => f.Id == ficha.Id);
+            var fichaExistente =
+                await _context.FichasMedicas
+                    .FirstOrDefaultAsync(f =>
+                        f.Id == ficha.Id);
 
             if (fichaExistente == null)
             {
                 return NotFound();
             }
 
-            fichaExistente.Padecimientos = ficha.Padecimientos;
-            fichaExistente.Enfermedades = ficha.Enfermedades;
-            fichaExistente.Psicopatologias = ficha.Psicopatologias;
-            fichaExistente.MedicamentosFrecuentes = ficha.MedicamentosFrecuentes;
-            fichaExistente.Alergias = ficha.Alergias;
-            fichaExistente.ObservacionesMedicas = ficha.ObservacionesMedicas;
-            fichaExistente.FechaActualizacion = DateTime.Now;
+            fichaExistente.Padecimientos =
+                ficha.Padecimientos;
+
+            fichaExistente.Enfermedades =
+                ficha.Enfermedades;
+
+            fichaExistente.Psicopatologias =
+                ficha.Psicopatologias;
+
+            fichaExistente.MedicamentosFrecuentes =
+                ficha.MedicamentosFrecuentes;
+
+            fichaExistente.Alergias =
+                ficha.Alergias;
+
+            fichaExistente.ObservacionesMedicas =
+                ficha.ObservacionesMedicas;
+
+            fichaExistente.FechaActualizacion =
+                DateTime.Now;
 
             await _context.SaveChangesAsync();
 
             return RedirectToAction(
                 "Ver",
-                new { pacienteId = fichaExistente.PacienteId }
+                new
+                {
+                    pacienteId =
+                        fichaExistente.PacienteId
+                }
             );
         }
 
+
+        // =========================================================
+        // CREAR FICHA
+        // Enfermero NO puede crear
+        // =========================================================
+
         [HttpGet]
-        public async Task<IActionResult> Crear(int pacienteId)
+        [Authorize(
+            Roles = "Administrador,Médico general,Médico especialista")]
+        public async Task<IActionResult> Crear(
+            int pacienteId)
         {
-            var paciente = await _context.Pacientes
-                .FirstOrDefaultAsync(p => p.Id == pacienteId);
+            var paciente =
+                await _context.Pacientes
+                    .FirstOrDefaultAsync(p =>
+                        p.Id == pacienteId);
 
             if (paciente == null)
             {
@@ -107,31 +177,57 @@ namespace Asilo.Web.Controllers
             return View(ficha);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Crear(FichaMedica ficha)
+        [ValidateAntiForgeryToken]
+        [Authorize(
+            Roles = "Administrador,Médico general,Médico especialista")]
+        public async Task<IActionResult> Crear(
+            FichaMedica ficha)
         {
             if (!ModelState.IsValid)
             {
-                ficha.Paciente = await _context.Pacientes
-                    .FirstOrDefaultAsync(p => p.Id == ficha.PacienteId);
+                ficha.Paciente =
+                    await _context.Pacientes
+                        .FirstOrDefaultAsync(p =>
+                            p.Id == ficha.PacienteId);
 
                 return View(ficha);
             }
 
-            var yaExiste = await _context.FichasMedicas
-                .AnyAsync(f => f.PacienteId == ficha.PacienteId);
+            var yaExiste =
+                await _context.FichasMedicas
+                    .AnyAsync(f =>
+                        f.PacienteId ==
+                        ficha.PacienteId);
 
             if (yaExiste)
             {
-                return RedirectToAction("Ver", new { pacienteId = ficha.PacienteId });
+                return RedirectToAction(
+                    "Ver",
+                    new
+                    {
+                        pacienteId =
+                            ficha.PacienteId
+                    }
+                );
             }
 
-            ficha.FechaActualizacion = DateTime.Now;
+            ficha.FechaActualizacion =
+                DateTime.Now;
 
             _context.FichasMedicas.Add(ficha);
+
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Ver", new { pacienteId = ficha.PacienteId });
+            return RedirectToAction(
+                "Ver",
+                new
+                {
+                    pacienteId =
+                        ficha.PacienteId
+                }
+            );
         }
     }
 }

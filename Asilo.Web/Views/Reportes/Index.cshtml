@@ -1,167 +1,261 @@
 ﻿@{
     ViewData["Title"] = "Reportes";
+
+    var esAdministrador =
+        User.IsInRole("Administrador");
+
+    var esAdministrativo =
+        User.IsInRole("Personal administrativo");
+
+    var esMedicoGeneral =
+        User.IsInRole("Médico general");
+
+    var esEspecialista =
+        User.IsInRole("Médico especialista");
+
+    var esEnfermero =
+        User.IsInRole("Enfermero");
+
+    var puedeVerClinicos =
+        esAdministrador ||
+        esMedicoGeneral ||
+        esEspecialista ||
+        esEnfermero;
+
+    var puedeVerFinancieros =
+        esAdministrador ||
+        esAdministrativo;
 }
 
 <div class="container mt-4">
 
-    <div class="mb-4">
-        <h2>Reportes</h2>
+    <div class="d-flex justify-content-between align-items-start mb-4">
 
-        <p class="text-muted">
-            Consulte información clínica, financiera y administrativa del asilo.
-        </p>
-    </div>
+        <div>
+            <h2>Reportes</h2>
 
-    <div class="row">
-
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        Costos por cita
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Consulta de costos por paciente incluyendo consulta,
-                        laboratorio y medicamentos.
-                    </p>
-
-                    <a asp-action="CostosPorCita"
-                       class="btn btn-primary">
-                        Ver reporte
-                    </a>
-
-                </div>
-            </div>
+            <p class="text-muted mb-0">
+                Consulte información clínica, financiera y administrativa del asilo.
+            </p>
         </div>
 
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        Análisis médico por paciente
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Ficha médica, historial, motivo de ingreso y medicamentos.
-                    </p>
-
-                    <a asp-action="AnalisisMedico"
-                       class="btn btn-primary">
-                        Ver reporte
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        Cobros por paciente
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Consulta de cobros por paciente y rango de fechas.
-                    </p>
-
-                    <a asp-action="CobrosPorPaciente"
-                       class="btn btn-primary">
-                        Ver reporte
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        Pagos a la Fundación
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Consulta de pagos recibidos por servicios y cuotas mensuales.
-                    </p>
-
-                    <a asp-action="PagosFundacion"
-                       class="btn btn-primary">
-                        Ver reporte
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        Entradas
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Reporte consolidado de donaciones y cobros recibidos.
-                    </p>
-
-                    <a asp-action="Entradas"
-                       class="btn btn-primary">
-                        Ver reporte
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        Exámenes por paciente
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Consulta de exámenes solicitados y resultados registrados.
-                    </p>
-
-                    <a asp-action="ExamenesPorPaciente"
-                       class="btn btn-primary">
-                        Ver reporte
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-
-                    <h5 class="card-title">
-                        Medicamentos por paciente
-                    </h5>
-
-                    <p class="card-text text-muted">
-                        Consulta de medicamentos prescritos y entregados.
-                    </p>
-
-                    <a asp-action="MedicamentosPorPaciente"
-                       class="btn btn-primary">
-                        Ver reporte
-                    </a>
-
-                </div>
-            </div>
+        <div>
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Volver al menú principal
+            </a>
         </div>
 
     </div>
+
+
+    @* ============================================================
+       REPORTES FINANCIEROS / ADMINISTRATIVOS
+       ============================================================ *@
+
+    @if (puedeVerFinancieros)
+    {
+        <h4 class="mb-3">
+            Reportes financieros y administrativos
+        </h4>
+
+        <div class="row mb-4">
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            Costos por cita
+                        </h5>
+
+                        <p class="card-text text-muted">
+                            Consulta de costos por paciente incluyendo consulta,
+                            laboratorio y medicamentos.
+                        </p>
+
+                        <a asp-action="CostosPorCita"
+                           class="btn btn-primary">
+                            Ver reporte
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            Cobros por paciente
+                        </h5>
+
+                        <p class="card-text text-muted">
+                            Consulta de cobros por paciente y rango de fechas,
+                            incluyendo el detalle de gastos médicos.
+                        </p>
+
+                        <a asp-action="CobrosPorPaciente"
+                           class="btn btn-primary">
+                            Ver reporte
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            Pagos a la Fundación
+                        </h5>
+
+                        <p class="card-text text-muted">
+                            Consulta de pagos realizados a la Fundación
+                            por rango de fechas.
+                        </p>
+
+                        <a asp-action="PagosFundacion"
+                           class="btn btn-primary">
+                            Ver reporte
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            Entradas
+                        </h5>
+
+                        <p class="card-text text-muted">
+                            Reporte consolidado de donaciones y cobros recibidos.
+                        </p>
+
+                        <a asp-action="Entradas"
+                           class="btn btn-primary">
+                            Ver reporte
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    }
+
+
+    @* ============================================================
+       REPORTES CLÍNICOS
+       ============================================================ *@
+
+    @if (puedeVerClinicos)
+    {
+        <h4 class="mb-3">
+            Reportes clínicos
+        </h4>
+
+        <div class="row">
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            Análisis médico por paciente
+                        </h5>
+
+                        <p class="card-text text-muted">
+                            Ficha médica, historial, motivo de ingreso
+                            y medicamentos registrados.
+                        </p>
+
+                        <a asp-action="AnalisisMedico"
+                           class="btn btn-primary">
+                            Ver reporte
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            @if (esAdministrador ||
+                 esMedicoGeneral ||
+                 esEspecialista)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                Exámenes por paciente
+                            </h5>
+
+                            <p class="card-text text-muted">
+                                Consulta de exámenes de laboratorio solicitados,
+                                realizados y sus resultados.
+                            </p>
+
+                            <a asp-action="ExamenesPorPaciente"
+                               class="btn btn-primary">
+                                Ver reporte
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            Medicamentos aplicados por paciente
+                        </h5>
+
+                        <p class="card-text text-muted">
+                            Consulta de medicamentos o tratamientos aplicados
+                            durante las visitas médicas de cada paciente.
+                        </p>
+
+                        <a asp-action="MedicamentosPorPaciente"
+                           class="btn btn-primary">
+                            Ver reporte
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+            
+
+        </div>
+    }
 
 </div>

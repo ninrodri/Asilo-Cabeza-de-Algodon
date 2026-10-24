@@ -32,6 +32,7 @@ namespace Asilo.Web.Data
         public DbSet<ConsultaGeneral> ConsultasGenerales { get; set; }
         public DbSet<CobroVisita> CobrosVisitas { get; set; }
         public DbSet<PagoFundacion> PagosFundacion { get; set; }
+        public DbSet<MedicamentoAplicado> MedicamentosAplicados { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -150,6 +151,17 @@ namespace Asilo.Web.Data
                 .HasForeignKey(cv => cv.VisitaMedicaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<MedicamentoAplicado>()
+            .HasOne(m => m.VisitaMedica)
+            .WithMany()
+            .HasForeignKey(m => m.VisitaMedicaId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MedicamentoAplicado>()
+                .HasOne(m => m.RegistradoPor)
+                .WithMany()
+                .HasForeignKey(m => m.RegistradoPorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

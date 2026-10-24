@@ -1,0 +1,200 @@
+﻿@model IEnumerable<Asilo.Web.Models.MedicamentoAplicado>
+
+@{
+    ViewData["Title"] = "Historial de medicamentos aplicados";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+
+        <div>
+            <h2>Historial de medicamentos aplicados</h2>
+
+            <p class="text-muted mb-0">
+                Consulte los medicamentos o tratamientos aplicados durante las visitas médicas.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+            @if (ViewBag.VisitaId != null)
+            {
+                <a asp-controller="VisitaMedica"
+                   asp-action="Ver"
+                   asp-route-id="@ViewBag.VisitaId"
+                   class="btn btn-outline-primary">
+                    Volver a la visita
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index"
+                   class="btn btn-outline-primary">
+                    Volver a visitas
+                </a>
+            }
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-action="Historial"
+                  class="row g-3 align-items-end">
+
+                <div class="col-md-8">
+
+                    <label class="form-label fw-semibold">
+                        Paciente
+                    </label>
+
+                    <select name="pacienteId"
+                            class="form-select">
+
+                        <option value="">
+                            Todos los pacientes
+                        </option>
+
+                        @foreach (var paciente in ViewBag.Pacientes)
+                        {
+                            if (ViewBag.PacienteId != null &&
+                                paciente.Id == (int)ViewBag.PacienteId)
+                            {
+                                <option value="@paciente.Id" selected>
+                                    @paciente.NombreCompleto
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@paciente.Id">
+                                    @paciente.NombreCompleto
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Filtrar
+                        </button>
+
+                        <a asp-action="Historial"
+                           class="btn btn-outline-secondary">
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+        @if (ViewBag.SeleccionarPaciente == true)
+{
+    <div class="alert alert-info">
+        Seleccione un paciente para consultar su historial de medicamentos aplicados.
+    </div>
+}
+else if (!Model.Any())
+{
+    <div class="alert alert-info">
+        El paciente seleccionado no tiene medicamentos o tratamientos aplicados registrados.
+    </div>
+}
+        
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Paciente</th>
+                        <th>Medicamento / tratamiento</th>
+                        <th>Cantidad</th>
+                        <th>Tiempo de aplicación</th>
+                        <th>Médico</th>
+                        <th>Registrado por</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var aplicacion in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @aplicacion.FechaAplicacion.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @aplicacion.VisitaMedica?.Paciente?.NombreCompleto
+                            </td>
+
+                            <td>
+                                <strong>
+                                    @aplicacion.Medicamento
+                                </strong>
+                            </td>
+
+                            <td>
+                                @aplicacion.CantidadAplicada
+                            </td>
+
+                            <td>
+                                @aplicacion.TiempoAplicacion
+                            </td>
+
+                            <td>
+                                @aplicacion.VisitaMedica?.Medico
+                            </td>
+
+                            <td>
+                                @aplicacion.RegistradoPor?.NombreUsuario
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrWhiteSpace(aplicacion.Observaciones)
+                                    ? "-"
+                                    : aplicacion.Observaciones)
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+</div>

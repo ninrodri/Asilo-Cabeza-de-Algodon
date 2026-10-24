@@ -1,0 +1,267 @@
+﻿@model Asilo.Web.Models.Usuario
+
+@{
+    ViewData["Title"] = "Editar usuario";
+
+    var roles =
+        ViewBag.Roles as List<Asilo.Web.Models.Rol>;
+
+    var passwordActual =
+        Model.PasswordHash;
+}
+
+<div class="container mt-4 mb-5">
+
+    <div class="mb-4">
+
+        <h2 class="mb-1">
+            Editar usuario
+        </h2>
+
+        <p class="text-muted">
+            Modifique los datos, rol o especialidad del usuario.
+        </p>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <form asp-action="Editar"
+                  method="post">
+
+                <input type="hidden"
+                       asp-for="Id" />
+
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="NombreUsuario"
+                               class="form-label">
+                            Nombre de usuario
+                        </label>
+
+                        <input asp-for="NombreUsuario"
+                               class="form-control" />
+
+                        <span asp-validation-for="NombreUsuario"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="Correo"
+                               class="form-label">
+                            Correo electrónico
+                        </label>
+
+                        <input asp-for="Correo"
+                               class="form-control" />
+
+                        <span asp-validation-for="Correo"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="RolId"
+                               class="form-label">
+                            Rol
+                        </label>
+
+                        <select asp-for="RolId"
+                                id="RolId"
+                                class="form-select">
+
+                            @if (roles != null)
+                            {
+                                foreach (var rol in roles)
+                                {
+                                    <option value="@rol.Id"
+                                            data-nombre="@rol.Nombre">
+                                        @rol.Nombre
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="RolId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Nueva contraseña
+                        </label>
+
+                        <input name="PasswordHash"
+                               type="password"
+                               class="form-control"
+                               value=""
+                               placeholder="Dejar vacío para conservar la actual" />
+
+                        <small class="text-muted">
+                            Solo escriba una contraseña si desea cambiarla.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-3"
+                     id="BloqueEspecialidad">
+
+                    <label asp-for="Especialidad"
+                           class="form-label">
+                        Especialidad médica
+                    </label>
+
+                    <select asp-for="Especialidad"
+                            class="form-select">
+
+                        <option value="">
+                            Seleccione...
+                        </option>
+
+                        <option value="Cardiología">
+                            Cardiología
+                        </option>
+
+                        <option value="Neurología">
+                            Neurología
+                        </option>
+
+                        <option value="Psiquiatría">
+                            Psiquiatría
+                        </option>
+
+                        <option value="Traumatología">
+                            Traumatología
+                        </option>
+
+                        <option value="Medicina interna">
+                            Medicina interna
+                        </option>
+
+                        <option value="Geriatría">
+                            Geriatría
+                        </option>
+
+                        <option value="Dermatología">
+                            Dermatología
+                        </option>
+
+                        <option value="Oftalmología">
+                            Oftalmología
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="Especialidad"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="d-flex gap-2 mt-4">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Guardar cambios
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <script>
+
+        function actualizarEspecialidad() {
+
+            const selectRol =
+                document.getElementById("RolId");
+
+            const opcion =
+                selectRol.options[
+                    selectRol.selectedIndex
+                ];
+
+            const nombreRol =
+                opcion
+                    ? opcion.getAttribute(
+                        "data-nombre"
+                    )
+                    : "";
+
+            const bloque =
+                document.getElementById(
+                    "BloqueEspecialidad"
+                );
+
+
+            if (nombreRol ===
+                "Médico especialista") {
+
+                bloque.style.display =
+                    "block";
+            }
+            else {
+
+                bloque.style.display =
+                    "none";
+            }
+        }
+
+
+        document
+            .getElementById("RolId")
+            .addEventListener(
+                "change",
+                actualizarEspecialidad
+            );
+
+
+        actualizarEspecialidad();
+
+    </script>
+}

@@ -4,83 +4,316 @@
     ViewData["Title"] = "Iniciar sesión";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
+<style>
+    body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+            linear-gradient(
+                rgba(8, 27, 52, 0.78),
+                rgba(8, 27, 52, 0.88)
+            ),
+            url('/images/login-bg.jpg') center center / cover no-repeat fixed;
+    }
 
-        <div class="col-md-5">
+    .login-page {
+        min-height: calc(100vh - 70px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 15px;
+    }
 
-            <div class="card shadow">
+    .login-card {
+        width: 100%;
+        max-width: 390px;
+        padding: 35px 30px 28px 30px;
+        border-radius: 28px;
 
-                <div class="card-body p-4">
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.25);
 
-                    <div class="text-center mb-4">
-                        <h2>Asilo Cabeza de Algodón</h2>
+        box-shadow:
+            0 18px 45px rgba(0, 0, 0, 0.35);
 
-                        <p class="text-muted">
-                            Sistema de Administración
-                        </p>
-                    </div>
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
 
-                    @if (ViewBag.Error != null)
-                    {
-                        <div class="alert alert-danger">
-                            @ViewBag.Error
-                        </div>
-                    }
+        color: white;
+    }
 
-                    <form asp-action="Index"
-                          asp-controller="Login"
-                          method="post">
+    .login-icon {
+        width: 88px;
+        height: 88px;
 
-                        <div class="mb-3">
+        margin: 0 auto 22px auto;
 
-                            <label asp-for="UsuarioOCorreo"
-                                   class="form-label">
-                            </label>
+        border-radius: 50%;
 
-                            <input asp-for="UsuarioOCorreo"
-                                   class="form-control"
-                                   placeholder="admin o admin@asilo.com" />
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-                            <span asp-validation-for="UsuarioOCorreo"
-                                  class="text-danger">
-                            </span>
+        background: rgba(13, 61, 135, 0.95);
 
-                        </div>
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.25);
+    }
 
-                        <div class="mb-3">
+    .login-icon span {
+        font-size: 42px;
+        line-height: 1;
+    }
 
-                            <label asp-for="Password"
-                                   class="form-label">
-                            </label>
+    .login-title {
+        font-size: 28px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 6px;
+    }
 
-                            <input asp-for="Password"
-                                   class="form-control"
-                                   placeholder="Ingrese su contraseña" />
+    .login-subtitle {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.82);
+        margin-bottom: 28px;
+    }
 
-                            <span asp-validation-for="Password"
-                                  class="text-danger">
-                            </span>
+    .login-field {
+        position: relative;
+        margin-bottom: 18px;
+    }
 
-                        </div>
+    .login-field input {
+        width: 100%;
+        height: 50px;
 
-                        <button type="submit"
-                                class="btn btn-primary w-100">
+        border: none;
+        border-radius: 14px;
 
-                            Iniciar sesión
+        padding-left: 46px;
+        padding-right: 14px;
 
-                        </button>
+        background: rgba(255, 255, 255, 0.20);
 
-                    </form>
+        color: white;
+
+        outline: none;
+
+        transition: 0.2s ease;
+    }
+
+    .login-field input::placeholder {
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    .login-field input:focus {
+        background: rgba(255, 255, 255, 0.28);
+
+        box-shadow:
+            0 0 0 2px rgba(73, 139, 255, 0.75);
+    }
+
+    .login-field-icon {
+        position: absolute;
+
+        left: 16px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        font-size: 19px;
+        color: white;
+
+        pointer-events: none;
+    }
+
+    .login-validation {
+        display: block;
+        margin-top: 5px;
+        font-size: 13px;
+        color: #ffd0d0;
+    }
+
+    .login-button {
+        width: 100%;
+        height: 50px;
+
+        border: none;
+        border-radius: 14px;
+
+        background: #0d5bd7;
+
+        color: white;
+
+        font-size: 16px;
+        font-weight: 600;
+
+        transition: 0.2s ease;
+    }
+
+    .login-button:hover {
+        background: #0a4cba;
+        transform: translateY(-1px);
+    }
+
+    .login-access {
+        text-align: center;
+
+        margin-top: 20px;
+
+        color: rgba(255, 255, 255, 0.78);
+
+        font-size: 14px;
+    }
+
+    .login-alert {
+        background: rgba(220, 53, 69, 0.88);
+        border: none;
+        color: white;
+    }
+
+    .login-footer {
+        text-align: center;
+
+        margin-top: 28px;
+
+        font-size: 13px;
+
+        color: rgba(255, 255, 255, 0.72);
+    }
+
+    .top-login-title {
+        display: none;
+    }
+
+    @@media (max-width: 576px) {
+
+        .login-card {
+            padding: 28px 22px;
+            border-radius: 22px;
+        }
+
+        .login-title {
+            font-size: 24px;
+        }
+
+        .login-icon {
+            width: 75px;
+            height: 75px;
+        }
+
+        .login-icon span {
+            font-size: 35px;
+        }
+    }
+</style>
+
+
+<div class="login-page">
+
+    <div>
+
+        <div class="login-card">
+            <div class="login-icon">
+    <svg viewBox="0 0 24 24"
+         width="46"
+         height="46"
+         fill="none"
+         stroke="white"
+         stroke-width="1.7"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+
+        <circle cx="12" cy="8" r="4"></circle>
+
+        <path d="M4.5 21
+                 C4.5 16.8 7.8 13.5 12 13.5
+                 C16.2 13.5 19.5 16.8 19.5 21">
+        </path>
+
+    </svg>
+</div>
+
+            <div class="login-title">
+                Asilo Cabeza de Algodón
+            </div>
+
+            <div class="login-subtitle">
+                Sistema de Administración
+            </div>
+
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert login-alert">
+                    @ViewBag.Error
+                </div>
+            }
+
+
+            <form asp-action="Index"
+                  asp-controller="Login"
+                  method="post">
+
+                <div class="login-field">
+
+                    <span class="login-field-icon">
+                        👤
+                    </span>
+
+                    <input asp-for="UsuarioOCorreo"
+                           placeholder="Usuario o correo"
+                           autocomplete="username" />
+
+                    <span asp-validation-for="UsuarioOCorreo"
+                          class="login-validation">
+                    </span>
 
                 </div>
 
+
+                <div class="login-field">
+
+                    <span class="login-field-icon">
+                        🔒
+                    </span>
+
+                    <input asp-for="Password"
+                           placeholder="Contraseña"
+                           autocomplete="current-password" />
+
+                    <span asp-validation-for="Password"
+                          class="login-validation">
+                    </span>
+
+                </div>
+
+
+                <button type="submit"
+                        class="login-button">
+
+                    ✓ &nbsp; Iniciar sesión
+
+                </button>
+
+            </form>
+
+
+            <div class="login-access">
+                Acceso exclusivo para personal autorizado
             </div>
 
         </div>
 
+
+        <div class="login-footer">
+            © 2026 - Asilo de Ancianos Cabeza de Algodón
+        </div>
+
     </div>
+
 </div>
+
 
 @section Scripts {
     @{

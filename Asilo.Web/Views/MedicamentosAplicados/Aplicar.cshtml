@@ -1,0 +1,202 @@
+﻿@model Asilo.Web.Models.MedicamentoAplicado
+
+@{
+    ViewData["Title"] = "Registrar medicamento aplicado";
+    var visita = ViewBag.Visita as Asilo.Web.Models.VisitaMedica;
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-start mb-4">
+
+        <div>
+            <h2>Registrar medicamento o tratamiento aplicado</h2>
+
+            <p class="text-muted mb-0">
+                Registre el medicamento o tratamiento administrado durante la visita médica.
+            </p>
+        </div>
+
+        <div>
+            <a asp-controller="VisitaMedica"
+               asp-action="Ver"
+               asp-route-id="@visita?.Id"
+               class="btn btn-secondary">
+                Volver a la visita
+            </a>
+        </div>
+
+    </div>
+
+    @if (visita != null)
+    {
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+                    Información de la visita médica
+                </h5>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <strong>Paciente:</strong><br />
+                        @visita.Paciente?.NombreCompleto
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <strong>Médico:</strong><br />
+                        @visita.Medico
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <strong>Fecha de visita:</strong><br />
+                        @visita.FechaVisita.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <strong>Diagnóstico:</strong><br />
+                        @visita.Diagnostico
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <strong>Tratamiento indicado:</strong><br />
+                        @(string.IsNullOrWhiteSpace(visita.Tratamiento)
+                            ? "-"
+                            : visita.Tratamiento)
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form asp-action="Aplicar"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       asp-for="VisitaMedicaId" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="Medicamento"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <input asp-for="Medicamento"
+                           class="form-control"
+                           placeholder="Ejemplo: Acetaminofén, solución salina, transfusión sanguínea" />
+
+                    <span asp-validation-for="Medicamento"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="CantidadAplicada"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <input asp-for="CantidadAplicada"
+                           class="form-control"
+                           placeholder="Ejemplo: 500 mg, 1 ampolla, 500 ml, 1 unidad" />
+
+                    <span asp-validation-for="CantidadAplicada"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="TiempoAplicacion"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <input asp-for="TiempoAplicacion"
+                           class="form-control"
+                           placeholder="Ejemplo: Aplicación inmediata, 30 minutos, 2 horas" />
+
+                    <span asp-validation-for="TiempoAplicacion"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="FechaAplicacion"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <input asp-for="FechaAplicacion"
+                           type="datetime-local"
+                           class="form-control" />
+
+                    <span asp-validation-for="FechaAplicacion"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label asp-for="Observaciones"
+                           class="form-label fw-semibold">
+                    </label>
+
+                    <textarea asp-for="Observaciones"
+                              class="form-control"
+                              rows="3"
+                              placeholder="Ejemplo: Medicamento administrado sin inconvenientes.">
+                    </textarea>
+
+                    <span asp-validation-for="Observaciones"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Registrar aplicación
+                    </button>
+                    <a asp-controller="VisitaMedica"
+                       asp-action="Ver"
+                       asp-route-id="@visita?.Id"
+                       class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

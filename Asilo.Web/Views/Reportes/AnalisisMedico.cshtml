@@ -6,64 +6,91 @@
 
 <div class="container mt-4">
 
-    <div class="mb-4">
-        <h2>Reporte de análisis médico por paciente</h2>
+    <div class="d-flex justify-content-between align-items-start mb-4">
 
-        <p class="text-muted">
-            Consulta de ficha médica, antecedentes, historial y medicamentos
-            registrados para el paciente.
-        </p>
+        <div>
+            <h2>Reporte de análisis médico por paciente</h2>
+
+            <p class="text-muted mb-0">
+                Consulta de ficha médica, antecedentes, historial y medicamentos
+                registrados para el paciente.
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Volver a reportes
+            </a>
+        </div>
+
     </div>
 
-    <form method="get"
-          asp-action="AnalisisMedico"
-          class="row g-3 mb-4">
 
-        <div class="col-md-6">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
 
-            <label class="form-label">
-                Paciente
-            </label>
+            <form method="get"
+                  asp-action="AnalisisMedico"
+                  class="row g-3 align-items-end">
 
-            <select name="pacienteId"
-                    class="form-select">
+                <div class="col-md-8">
 
-                <option value="">
-                    Seleccione un paciente
-                </option>
+                    <label class="form-label fw-semibold">
+                        Paciente
+                    </label>
 
-                @foreach (var paciente in ViewBag.Pacientes)
-                {
-                    if (ViewBag.PacienteId != null &&
-                        paciente.Id == (int)ViewBag.PacienteId)
-                    {
-                        <option value="@paciente.Id"
-                                selected>
-                            @paciente.NombreCompleto
+                    <select name="pacienteId"
+                            class="form-select">
+
+                        <option value="">
+                            Seleccione un paciente
                         </option>
-                    }
-                    else
-                    {
-                        <option value="@paciente.Id">
-                            @paciente.NombreCompleto
-                        </option>
-                    }
-                }
 
-            </select>
+                        @foreach (var paciente in ViewBag.Pacientes)
+                        {
+                            if (ViewBag.PacienteId != null &&
+                                paciente.Id == (int)ViewBag.PacienteId)
+                            {
+                                <option value="@paciente.Id" selected>
+                                    @paciente.NombreCompleto
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@paciente.Id">
+                                    @paciente.NombreCompleto
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Consultar
+                        </button>
+
+                        <a asp-action="AnalisisMedico"
+                           class="btn btn-outline-secondary">
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
+    </div>
 
-        <div class="col-md-3 d-flex align-items-end">
-
-            <button type="submit"
-                    class="btn btn-primary">
-                Consultar
-            </button>
-
-        </div>
-
-    </form>
 
     @if (Model != null)
     {
@@ -71,86 +98,111 @@
 
             <div class="card-body">
 
-                <h4>
-                    @Model.NombreCompleto
+                <h4 class="mb-3">
+                    Información del paciente
                 </h4>
 
                 <p>
-                    <strong>Fecha de nacimiento:</strong>
-                    ¿@(Model.FechaNacimiento.HasValue
-                        ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy")
-                    : "No registrada")
+                    <strong>Nombre:</strong>
+                    @Model.NombreCompleto
                 </p>
 
                 <p>
+                    <strong>Fecha de nacimiento:</strong>
+                    @(Model.FechaNacimiento.HasValue
+                        ? Model.FechaNacimiento.Value.ToString("dd/MM/yyyy")
+                        : "No registrada")
+                </p>
+
+                <p class="mb-0">
                     <strong>Motivo de ingreso:</strong>
-                    @Model.MotivoIngreso
+                    @(string.IsNullOrWhiteSpace(Model.MotivoIngreso)
+                        ? "No registrado"
+                        : Model.MotivoIngreso)
                 </p>
 
             </div>
 
         </div>
 
+
         <div class="card shadow-sm mb-4">
 
             <div class="card-body">
 
-                <h4>Ficha médica</h4>
+                <h4 class="mb-3">
+                    Ficha médica
+                </h4>
 
                 @if (Model.FichaMedica != null)
                 {
                     <p>
                         <strong>Padecimientos:</strong>
-                        @Model.FichaMedica.Padecimientos
+                        @(string.IsNullOrWhiteSpace(Model.FichaMedica.Padecimientos)
+                            ? "No registrados"
+                            : Model.FichaMedica.Padecimientos)
                     </p>
 
                     <p>
                         <strong>Enfermedades:</strong>
-                        @Model.FichaMedica.Enfermedades
+                        @(string.IsNullOrWhiteSpace(Model.FichaMedica.Enfermedades)
+                            ? "No registradas"
+                            : Model.FichaMedica.Enfermedades)
                     </p>
 
                     <p>
                         <strong>Psicopatologías:</strong>
-                        @Model.FichaMedica.Psicopatologias
+                        @(string.IsNullOrWhiteSpace(Model.FichaMedica.Psicopatologias)
+                            ? "No registradas"
+                            : Model.FichaMedica.Psicopatologias)
                     </p>
 
                     <p>
                         <strong>Medicamentos frecuentes:</strong>
-                        @Model.FichaMedica.MedicamentosFrecuentes
+                        @(string.IsNullOrWhiteSpace(Model.FichaMedica.MedicamentosFrecuentes)
+                            ? "No registrados"
+                            : Model.FichaMedica.MedicamentosFrecuentes)
                     </p>
 
                     <p>
                         <strong>Alergias:</strong>
-                        @Model.FichaMedica.Alergias
+                        @(string.IsNullOrWhiteSpace(Model.FichaMedica.Alergias)
+                            ? "No registradas"
+                            : Model.FichaMedica.Alergias)
                     </p>
 
-                    <p>
-                        <strong>Observaciones:</strong>
-                        @Model.FichaMedica.ObservacionesMedicas
+                    <p class="mb-0">
+                        <strong>Observaciones médicas:</strong>
+                        @(string.IsNullOrWhiteSpace(Model.FichaMedica.ObservacionesMedicas)
+                            ? "Sin observaciones"
+                            : Model.FichaMedica.ObservacionesMedicas)
                     </p>
                 }
                 else
                 {
-                    <p class="text-muted">
+                    <div class="alert alert-info mb-0">
                         El paciente no tiene ficha médica registrada.
-                    </p>
+                    </div>
                 }
 
             </div>
 
         </div>
 
+
         <div class="card shadow-sm mb-4">
 
             <div class="card-body">
 
-                <h4>Historial médico</h4>
+                <h4 class="mb-3">
+                    Historial médico
+                </h4>
 
                 @if (Model.HistorialMedico.Any())
                 {
                     <div class="table-responsive">
 
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover align-middle">
 
                             <thead>
                                 <tr>
@@ -167,6 +219,7 @@
                                     .OrderByDescending(h => h.Fecha))
                                 {
                                     <tr>
+
                                         <td>
                                             @registro.Fecha.ToString("dd/MM/yyyy HH:mm")
                                         </td>
@@ -182,6 +235,7 @@
                                         <td>
                                             @registro.ProfesionalResponsable
                                         </td>
+
                                     </tr>
                                 }
 
@@ -193,20 +247,23 @@
                 }
                 else
                 {
-                    <p class="text-muted">
+                    <div class="alert alert-info mb-0">
                         No hay historial médico registrado.
-                    </p>
+                    </div>
                 }
 
             </div>
 
         </div>
 
+
         <div class="card shadow-sm">
 
             <div class="card-body">
 
-                <h4>Medicamentos recetados</h4>
+                <h4 class="mb-3">
+                    Medicamentos recetados
+                </h4>
 
                 @{
                     var medicamentos = Model.VisitasMedicas
@@ -219,7 +276,7 @@
                 {
                     <div class="table-responsive">
 
-                        <table class="table table-striped">
+                        <table class="table table-striped table-hover align-middle">
 
                             <thead>
                                 <tr>
@@ -236,11 +293,29 @@
                                 @foreach (var medicamento in medicamentos)
                                 {
                                     <tr>
-                                        <td>@medicamento.Medicamento</td>
-                                        <td>@medicamento.Dosis</td>
-                                        <td>@medicamento.Frecuencia</td>
-                                        <td>@medicamento.Duracion</td>
-                                        <td>@medicamento.Indicaciones</td>
+
+                                        <td>
+                                            @medicamento.Medicamento
+                                        </td>
+
+                                        <td>
+                                            @medicamento.Dosis
+                                        </td>
+
+                                        <td>
+                                            @medicamento.Frecuencia
+                                        </td>
+
+                                        <td>
+                                            @medicamento.Duracion
+                                        </td>
+
+                                        <td>
+                                            @(string.IsNullOrWhiteSpace(medicamento.Indicaciones)
+                                                ? "-"
+                                                : medicamento.Indicaciones)
+                                        </td>
+
                                     </tr>
                                 }
 
@@ -252,9 +327,9 @@
                 }
                 else
                 {
-                    <p class="text-muted">
+                    <div class="alert alert-info mb-0">
                         No hay medicamentos recetados.
-                    </p>
+                    </div>
                 }
 
             </div>

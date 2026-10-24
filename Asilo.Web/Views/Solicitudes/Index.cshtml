@@ -1,18 +1,27 @@
 ﻿@model IEnumerable<Asilo.Web.Models.SolicitudMedica>
 
 @{
-    ViewData["Title"] = "Solicitudes médicas";
+    ViewData["Title"] = "Mis visitas asignadas";
+    var esEnfermero = User.IsInRole("Enfermero");
 }
 
 <div class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div>
-            <h2>Solicitudes médicas</h2>
+            <h2 class="mb-1">
+                @(esEnfermero ? "Mis visitas asignadas" : "Solicitudes médicas")
+            </h2>
 
             <p class="text-muted mb-0">
-                Consulta y seguimiento de referencias médicas.
+                @if (esEnfermero)
+                {
+                    <text>Visitas médicas en las que ha sido asignado como enfermero acompañante.</text>
+                }
+                else
+                {
+                    <text>Consulta y seguimiento de referencias médicas.</text>
+                }
             </p>
         </div>
 
@@ -21,9 +30,7 @@
            class="btn btn-secondary">
             Volver al menú principal
         </a>
-
     </div>
-
 
     @if (TempData["Exito"] != null)
     {
@@ -39,100 +46,107 @@
         </div>
     }
 
-
     @if (!Model.Any())
     {
         <div class="alert alert-info">
-            No hay solicitudes médicas registradas.
+            No hay registros para mostrar.
         </div>
     }
     else
     {
-        <div class="table-responsive">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Fecha solicitud</th>
+                                <th>Paciente</th>
+                                <th>Médico especialista</th>
+                                <th>Fecha programada</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
 
-            <table class="table table-striped table-hover">
+                        <tbody>
+                            @foreach (var solicitud in Model)
+                            {
+                                <tr>
+                                    <td class="text-nowrap">
+                                        @solicitud.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
 
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Paciente</th>
-                        <th>Médico</th>
-                        <th>Especialidad</th>
-                        <th>Motivo</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
+                                    <td>
+                                        <strong>
+                                            @(solicitud.Paciente?.NombreCompleto ?? "Sin paciente")
+                                        </strong>
 
-                <tbody>
+                                        <div class="small text-muted">
+                                            Especialidad:
+                                            @(solicitud.Especialidad ?? "Pendiente")
+                                        </div>
 
-                    @foreach (var solicitud in Model)
-                    {
-                        <tr>
+                                        <div class="small text-muted">
+                                            Motivo:
+                                            @solicitud.Motivo
+                                        </div>
+                                    </td>
 
-                            <td>
-                                @solicitud.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")
-                            </td>
+                                    <td>
+                                        @(solicitud.MedicoEspecialista?.NombreUsuario ?? "Pendiente")
+                                    </td>
 
-                            <td>
-                                @solicitud.Paciente?.NombreCompleto
-                            </td>
+                                    <td class="text-nowrap">
+                                        @(solicitud.FechaAtencion.HasValue
+                                            ? solicitud.FechaAtencion.Value.ToString("dd/MM/yyyy HH:mm")
+                                            : "Pendiente")
+                                    </td>
 
-                            <td>
-                                @(solicitud.MedicoEspecialista?.NombreUsuario
-                                    ?? "Pendiente de asignación")
-                            </td>
+                                    <td>
+                                        @if (solicitud.Estado == "Atendida")
+                                        {
+                                            <span class="badge bg-success">
+                                                Atendida
+                                            </span>
+                                        }
+                                        else if (solicitud.Estado == "Programada")
+                                        {
+                                            <span class="badge bg-primary">
+                                                Programada
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @solicitud.Estado
+                                            </span>
+                                        }
+                                    </td>
 
-                            <td>
-                                @(solicitud.Especialidad
-                                    ?? "Pendiente")
-                            </td>
-
-                            <td>
-                                @solicitud.Motivo
-                            </td>
-
-                            <td>
-                                @solicitud.Estado
-                            </td>
-
-                            <td>
-
-                                @if (solicitud.VisitaMedica != null)
-                                {
-                                    <a asp-controller="VisitaMedica"
-                                       asp-action="Ver"
-                                       asp-route-id="@solicitud.VisitaMedica.Id"
-                                       class="btn btn-info btn-sm">
-                                        Ver visita
-                                    </a>
-                                }
-                                else if (solicitud.Estado == "Programada")
-                                {
-                                    <a asp-controller="VisitaMedica"
-                                       asp-action="Crear"
-                                       asp-route-solicitudId="@solicitud.Id"
-                                       class="btn btn-success btn-sm">
-                                        Registrar visita
-                                    </a>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">
-                                        Sin visita
-                                    </span>
-                                }
-
-                            </td>
-
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
-
+                                    <td>
+                                        @if (solicitud.VisitaMedica != null)
+                                        {
+                                            <a asp-controller="VisitaMedica"
+                                               asp-action="Ver"
+                                               asp-route-id="@solicitud.VisitaMedica.Id"
+                                               class="btn btn-outline-info btn-sm">
+                                                Ver atención
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">
+                                                Sin visita
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     }
-
 </div>

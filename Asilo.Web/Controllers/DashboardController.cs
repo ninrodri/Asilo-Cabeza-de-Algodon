@@ -2,6 +2,8 @@
 using Asilo.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Asilo.Web.Controllers
 {
@@ -10,26 +12,67 @@ namespace Asilo.Web.Controllers
     {
         private readonly AsiloDbContext _context;
 
-        public DashboardController(AsiloDbContext context)
+        public DashboardController(
+            AsiloDbContext context)
         {
             _context = context;
         }
 
-        public IActionResult Index()
+
+        public async Task<IActionResult> Index()
         {
+            int misVisitasAsignadas = 0;
+
+
+            // =====================================================
+            // VISITAS PROGRAMADAS DEL ENFERMERO ACTUAL
+            // =====================================================
+
+            if (User.IsInRole("Enfermero"))
+            {
+                var idClaim = User.FindFirstValue(
+                    ClaimTypes.NameIdentifier);
+
+                if (int.TryParse(idClaim, out int enfermeroId))
+                {
+                    misVisitasAsignadas =
+                        await _context.SolicitudesMedicas
+                            .CountAsync(s =>
+                                s.EnfermeroId == enfermeroId &&
+                                s.Estado == "Programada");
+                }
+            }
+
+
+            // =====================================================
+            // DATOS DEL DASHBOARD
+            // =====================================================
+
             var model = new DashboardViewModel
             {
-                TotalInternos = _context.Pacientes.Count(),
+                TotalInternos =
+                    await _context.Pacientes.CountAsync(),
 
-                SolicitudesPendientes = _context.SolicitudesMedicas
-                    .Count(s => s.Estado == "Pendiente de Fundación"),
+                SolicitudesPendientes =
+                    await _context.SolicitudesMedicas
+                        .CountAsync(s =>
+                            s.Estado ==
+                            "Pendiente de Fundación"),
 
-                ExamenesPendientes = _context.ExamenesLaboratorio
-                    .Count(e => e.Estado != "Completado"),
+                ExamenesPendientes =
+                    await _context.ExamenesLaboratorio
+                        .CountAsync(e =>
+                            e.Estado != "Completado"),
 
-                CobrosPendientes = _context.Cobros
-                    .Count(c => c.Estado != "Pagado")
+                CobrosPendientes =
+                    await _context.Cobros
+                        .CountAsync(c =>
+                            c.Estado != "Pagado"),
+
+                MisVisitasAsignadas =
+                    misVisitasAsignadas
             };
+
 
             return View(model);
         }

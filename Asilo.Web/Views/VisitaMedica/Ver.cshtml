@@ -143,46 +143,48 @@
 
     <div class="card shadow-sm border-0 mb-4">
 
-        <div class="card-body">
+               
+    <div class="card-body">
 
-            <h5 class="mb-1">
-                Acciones de la visita
-            </h5>
+        <h4 class="mb-1">
+            Acciones de la visita
+        </h4>
 
-            <p class="text-muted mb-3">
+        <p class="text-muted">
+            Consulte la información clínica registrada durante esta visita.
+        </p>
 
-                @if (puedeContinuarAtencion)
-                {
-                    <text>
-                        Consulte la ficha médica o continúe
-                        con estudios y tratamiento.
-                    </text>
-                }
-                else
-                {
-                    <text>
-                        Consulte la información clínica
-                        registrada durante esta visita.
-                    </text>
-                }
+        <div class="d-flex flex-wrap gap-2">
 
-            </p>
+            <a asp-controller="FichaMedica"
+               asp-action="Ver"
+               asp-route-pacienteId="@Model.PacienteId"
+               asp-route-visitaId="@Model.Id"
+               class="btn btn-outline-primary">
+                Ver ficha médica
+            </a>
 
+            <a asp-controller="HistorialMedico"
+               asp-action="Index"
+               asp-route-pacienteId="@Model.PacienteId"
+               asp-route-visitaId="@Model.Id"
+               class="btn btn-outline-primary">
+                Ver historial médico
+            </a>
 
-            <div class="d-flex flex-wrap gap-2">
-
-                <!-- Todos los médicos autorizados a ver la
-                     visita pueden consultar la ficha -->
-
-                <a asp-controller="FichaMedica"
-                   asp-action="Ver"
-                   asp-route-pacienteId="@Model.PacienteId"
-                   class="btn btn-outline-secondary">
-
-                    Ver ficha médica
-
+            @if (User.IsInRole("Enfermero"))
+            {
+                <a asp-controller="MedicamentosAplicados"
+                   asp-action="Aplicar"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-primary">
+                    Registrar medicamento aplicado
                 </a>
+            }
 
+        </div>
+
+  
 
                 <!-- SOLO ESPECIALISTA RESPONSABLE -->
                 @if (puedeContinuarAtencion)

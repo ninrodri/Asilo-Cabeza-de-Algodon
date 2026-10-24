@@ -6,88 +6,114 @@
 
 <div class="container mt-4">
 
-    <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+
+    <div>
         <h2>Reporte de cobros por paciente</h2>
 
-        <p class="text-muted">
+        <p class="text-muted mb-0">
             Consulta de cobros y gastos médicos por paciente y rango de fechas.
         </p>
     </div>
 
-    <form method="get"
-          asp-action="CobrosPorPaciente"
-          class="row g-3 mb-4">
+    <div>
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Volver a reportes
+        </a>
+    </div>
 
-        <div class="col-md-4">
+</div>
 
-            <label class="form-label">
-                Paciente
-            </label>
+    <div class="card shadow-sm mb-4">
+    <div class="card-body">
 
-            <select name="pacienteId"
-                    class="form-select">
+        <form method="get"
+              asp-action="CobrosPorPaciente"
+              class="row g-3 align-items-end">
 
-                <option value="">
-                    Todos los pacientes
-                </option>
+            <div class="col-md-4">
 
-                @foreach (var paciente in ViewBag.Pacientes)
-                {
-                    if (ViewBag.PacienteId != null &&
-                        paciente.Id == (int)ViewBag.PacienteId)
+                <label class="form-label fw-semibold">
+                    Paciente
+                </label>
+
+                <select name="pacienteId"
+                        class="form-select">
+
+                    <option value="">
+                        Todos los pacientes
+                    </option>
+
+                    @foreach (var paciente in ViewBag.Pacientes)
                     {
-                        <option value="@paciente.Id" selected>
-                            @paciente.NombreCompleto
-                        </option>
+                        if (ViewBag.PacienteId != null &&
+                            paciente.Id == (int)ViewBag.PacienteId)
+                        {
+                            <option value="@paciente.Id" selected>
+                                @paciente.NombreCompleto
+                            </option>
+                        }
+                        else
+                        {
+                            <option value="@paciente.Id">
+                                @paciente.NombreCompleto
+                            </option>
+                        }
                     }
-                    else
-                    {
-                        <option value="@paciente.Id">
-                            @paciente.NombreCompleto
-                        </option>
-                    }
-                }
 
-            </select>
+                </select>
 
-        </div>
+            </div>
 
-        <div class="col-md-3">
+            <div class="col-md-3">
 
-            <label class="form-label">
-                Fecha inicial
-            </label>
+                <label class="form-label fw-semibold">
+                    Desde
+                </label>
 
-            <input type="date"
-                   name="fechaInicio"
-                   value="@ViewBag.FechaInicio"
-                   class="form-control" />
+                <input type="date"
+                       name="fechaInicio"
+                       value="@ViewBag.FechaInicio"
+                       class="form-control" />
 
-        </div>
+            </div>
 
-        <div class="col-md-3">
+            <div class="col-md-3">
 
-            <label class="form-label">
-                Fecha final
-            </label>
+                <label class="form-label fw-semibold">
+                    Hasta
+                </label>
 
-            <input type="date"
-                   name="fechaFin"
-                   value="@ViewBag.FechaFin"
-                   class="form-control" />
+                <input type="date"
+                       name="fechaFin"
+                       value="@ViewBag.FechaFin"
+                       class="form-control" />
 
-        </div>
+            </div>
 
-        <div class="col-md-2 d-flex align-items-end">
+            <div class="col-md-2">
 
-            <button type="submit"
-                    class="btn btn-primary">
-                Filtrar
-            </button>
+                <div class="d-flex gap-2">
 
-        </div>
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Filtrar
+                    </button>
 
-    </form>
+                    <a asp-action="CobrosPorPaciente"
+                       class="btn btn-outline-secondary">
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
 
     @if (!Model.Any())
     {

@@ -2,42 +2,64 @@
 
 @{
     ViewData["Title"] = "Ficha médica";
+
+    var puedeEditar =
+        User.IsInRole("Administrador") ||
+        User.IsInRole("Médico general") ||
+        User.IsInRole("Médico especialista");
+
+    int? visitaId = ViewBag.VisitaId as int?;
 }
 
 <div class="container mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
             <h2>Ficha médica</h2>
 
-            <p class="text-muted">
+            <p class="text-muted mb-0">
                 Información clínica del paciente.
             </p>
         </div>
 
-        <div>
-        <a asp-action="Editar"
-           asp-route-id="@Model.Id"
-           class="btn btn-warning">
-            Editar ficha médica
-        </a>
+        <div class="d-flex gap-2">
 
-            <a asp-controller="HistorialMedico"
-               asp-action="Index"
-               asp-route-pacienteId="@Model.PacienteId"
-               class="btn btn-info">
-                Historial médico
-            </a>
+            @if (puedeEditar)
+            {
+                <a asp-action="Editar"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-warning">
+                    Editar ficha médica
+                </a>
+            }
 
-        <a asp-controller="Ancianos"
-           asp-action="Index"
-           class="btn btn-secondary">
-            Volver
-        </a>
+            @if (visitaId.HasValue)
+            {
+                <a asp-controller="VisitaMedica"
+                   asp-action="Ver"
+                   asp-route-id="@visitaId.Value"
+                   class="btn btn-secondary">
+                    Volver
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Ancianos"
+                   asp-action="Detalle"
+                   asp-route-id="@Model.PacienteId"
+                   class="btn btn-secondary">
+                    Volver
+                </a>
+            }
+
         </div>
+
     </div>
 
+
     <div class="card shadow-sm">
+
         <div class="card-body">
 
             <h4 class="mb-3">
@@ -48,40 +70,74 @@
 
             <div class="mb-3">
                 <strong>Padecimientos:</strong>
-                <p>@Model.Padecimientos</p>
+
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.Padecimientos)
+                        ? "No registrados"
+                        : Model.Padecimientos)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Enfermedades:</strong>
-                <p>@Model.Enfermedades</p>
+
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.Enfermedades)
+                        ? "No registradas"
+                        : Model.Enfermedades)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Psicopatologías:</strong>
-                <p>@Model.Psicopatologias</p>
+
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.Psicopatologias)
+                        ? "No registradas"
+                        : Model.Psicopatologias)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Medicamentos frecuentes:</strong>
-                <p>@Model.MedicamentosFrecuentes</p>
+
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.MedicamentosFrecuentes)
+                        ? "No registrados"
+                        : Model.MedicamentosFrecuentes)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Alergias:</strong>
-                <p>@Model.Alergias</p>
+
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.Alergias)
+                        ? "No registradas"
+                        : Model.Alergias)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Observaciones médicas:</strong>
-                <p>@Model.ObservacionesMedicas</p>
+
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.ObservacionesMedicas)
+                        ? "Sin observaciones"
+                        : Model.ObservacionesMedicas)
+                </p>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-0">
                 <strong>Última actualización:</strong>
-                <p>@Model.FechaActualizacion.ToString("dd/MM/yyyy HH:mm")</p>
+
+                <p class="mb-0">
+                    @Model.FechaActualizacion.ToString("dd/MM/yyyy HH:mm")
+                </p>
             </div>
 
         </div>
+
     </div>
 
 </div>

@@ -6,5 +6,6 @@
         public int SolicitudesPendientes { get; set; }
         public int ExamenesPendientes { get; set; }
         public int CobrosPendientes { get; set; }
+        public int MisVisitasAsignadas { get; set; }
     }
 }

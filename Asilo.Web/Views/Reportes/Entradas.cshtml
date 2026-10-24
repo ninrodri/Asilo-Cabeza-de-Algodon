@@ -1,58 +1,85 @@
-﻿@{
+﻿@using System.Globalization
+@{
     ViewData["Title"] = "Reporte de Entradas";
 }
 
 <div class="container mt-4">
 
-    <div class="mb-4">
-        <h2>Reporte de entradas</h2>
+    <div class="d-flex justify-content-between align-items-start mb-4">
 
-        <p class="text-muted">
-            Consulta de ingresos recibidos por donaciones y cobros.
-        </p>
+        <div>
+            <h2>Reporte de entradas</h2>
+
+            <p class="text-muted mb-0">
+                Consulta de ingresos recibidos por donaciones y cobros.
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Volver a reportes
+            </a>
+        </div>
+
     </div>
 
-    <form method="get"
-          asp-action="Entradas"
-          class="row g-3 mb-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
 
-        <div class="col-md-4">
+            <form method="get"
+                  asp-action="Entradas"
+                  class="row g-3 align-items-end">
 
-            <label class="form-label">
-                Fecha inicial
-            </label>
+                <div class="col-md-4">
 
-            <input type="date"
-                   name="fechaInicio"
-                   value="@ViewBag.FechaInicio"
-                   class="form-control" />
+                    <label class="form-label fw-semibold">
+                        Desde
+                    </label>
+
+                    <input type="date"
+                           name="fechaInicio"
+                           value="@ViewBag.FechaInicio"
+                           class="form-control" />
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Hasta
+                    </label>
+
+                    <input type="date"
+                           name="fechaFin"
+                           value="@ViewBag.FechaFin"
+                           class="form-control" />
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            Filtrar
+                        </button>
+
+                        <a asp-action="Entradas"
+                           class="btn btn-outline-secondary">
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
 
         </div>
-
-        <div class="col-md-4">
-
-            <label class="form-label">
-                Fecha final
-            </label>
-
-            <input type="date"
-                   name="fechaFin"
-                   value="@ViewBag.FechaFin"
-                   class="form-control" />
-
-        </div>
-
-        <div class="col-md-4 d-flex align-items-end">
-
-            <button type="submit"
-                    class="btn btn-primary">
-                Filtrar
-            </button>
-
-        </div>
-
-    </form>
-
+    </div>
+    
     <div class="row mb-4">
 
         <div class="col-md-4 mb-3">
@@ -86,6 +113,42 @@
                     </h4>
                 </div>
             </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+                    <h5 class="mb-1">
+                        Distribución de entradas
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Comparación de ingresos provenientes de donaciones y cobros.
+                    </p>
+                </div>
+
+                <div class="text-end">
+                    <small class="text-muted">
+                        Total entradas
+                    </small>
+
+                    <h4 class="mb-0">
+                        Q @ViewBag.TotalEntradas.ToString("0.00")
+                    </h4>
+                </div>
+
+            </div>
+
+            <div style="height: 320px;">
+                <canvas id="graficaEntradas"></canvas>
+            </div>
+
         </div>
 
     </div>
@@ -186,3 +249,84 @@
     </div>
 
 </div>
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        const contextoEntradas =
+            document.getElementById('graficaEntradas');
+
+        if (contextoEntradas) {
+
+            new Chart(contextoEntradas, {
+
+                type: 'bar',
+
+                data: {
+
+                    labels: [
+                        'Donaciones',
+                        'Cobros recibidos'
+                    ],
+
+                    datasets: [{
+                        label: 'Ingresos en quetzales',
+
+                        data: [
+                            @Convert.ToDecimal(ViewBag.TotalDonaciones).ToString(CultureInfo.InvariantCulture),
+                            @Convert.ToDecimal(ViewBag.TotalPagos).ToString(CultureInfo.InvariantCulture)
+                        ],
+
+                        borderWidth: 1
+                    }]
+                },
+
+                options: {
+
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        },
+
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Q ' +
+                                        Number(context.raw).toFixed(2);
+                                }
+                            }
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                callback: function (value) {
+                                    return 'Q ' + value;
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+    </script>
+}

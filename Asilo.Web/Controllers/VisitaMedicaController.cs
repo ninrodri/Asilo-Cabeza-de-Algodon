@@ -3,6 +3,7 @@ using Asilo.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Asilo.Web.Controllers
 {
@@ -160,17 +161,29 @@ namespace Asilo.Web.Controllers
 
         // =====================================================
         // VER VISITA
-        // Médicos pueden consultar.
+        //
+        // Administrador:
+        //      Puede consultar cualquier visita.
+        //
+        // Médico general:
+        //      Puede consultar visitas.
+        //
+        // Médico especialista:
+        //      Solo puede consultar sus propias visitas.
+        //
+        // Enfermero:
+        //      Solo puede consultar visitas donde fue asignado.
         // =====================================================
 
         [HttpGet]
         [Authorize(Roles =
-            "Administrador,Médico general,Médico especialista")]
+            "Administrador,Médico general,Médico especialista,Enfermero")]
         public async Task<IActionResult> Ver(int id)
         {
             var visita = await _context.VisitasMedicas
                 .Include(v => v.Paciente)
                 .Include(v => v.SolicitudMedica)
+                    .ThenInclude(s => s!.MedicoEspecialista)
                 .Include(v => v.ExamenesLaboratorio)
                 .Include(v => v.Receta)
                     .ThenInclude(r => r!.Detalles)
@@ -179,6 +192,43 @@ namespace Asilo.Web.Controllers
             if (visita == null)
             {
                 return NotFound();
+            }
+
+
+            // -------------------------------------------------
+            // SEGURIDAD PARA MÉDICO ESPECIALISTA
+            // -------------------------------------------------
+
+            if (User.IsInRole("Médico especialista"))
+            {
+                var usuarioActual = User.Identity?.Name;
+
+                if (visita.Medico != usuarioActual)
+                {
+                    return Forbid();
+                }
+            }
+
+
+            // -------------------------------------------------
+            // SEGURIDAD PARA ENFERMERO
+            // -------------------------------------------------
+
+            if (User.IsInRole("Enfermero"))
+            {
+                var idClaim = User.FindFirstValue(
+                    ClaimTypes.NameIdentifier);
+
+                if (!int.TryParse(idClaim, out int enfermeroId))
+                {
+                    return Forbid();
+                }
+
+                if (visita.SolicitudMedica == null ||
+                    visita.SolicitudMedica.EnfermeroId != enfermeroId)
+                {
+                    return Forbid();
+                }
             }
 
             return View(visita);

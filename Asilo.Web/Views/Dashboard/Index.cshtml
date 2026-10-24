@@ -145,6 +145,26 @@
                     <h2>@Model.TotalInternos</h2>
                 </div>
             </div>
+
+            @if (esEnfermero)
+            {
+                <div class="col-md-6 col-lg-3">
+
+                    <div class="summary-card bg-card-2">
+
+                        <h6>
+                            Mis visitas programadas
+                        </h6>
+
+                        <h2>
+                            @Model.MisVisitasAsignadas
+                        </h2>
+
+                    </div>
+
+                </div>
+            }
+
         }
 
         @if (esAdministrador ||
@@ -242,27 +262,27 @@
                 </div>
             }
 
-            @if (esAdministrador || esAdministrativo)
-            {
-                <div class="col-md-6 col-lg-4">
-                    <div class="quick-card">
+                @if (esAdministrador)
+                {
+               <div class="col-md-6 col-lg-4">
+              <div class="quick-card">
 
-                        <h5>Ver reportes</h5>
+               <h5>Gestión de usuarios</h5>
 
-                        <p>
-                            Consultar reportes clínicos,
-                            administrativos y financieros.
-                        </p>
+                 <p>
+                Crear cuentas, asignar roles
+                y administrar accesos al sistema.
+                 </p>
 
-                        <a asp-controller="Reportes"
-                           asp-action="Index"
-                           class="btn btn-dark">
-                            Ir
-                        </a>
+                <a asp-controller="Usuarios"
+               asp-action="Index"
+               class="btn btn-primary">
+                Gestionar
+                </a>
 
-                    </div>
-                </div>
-            }
+                  </div>
+            </div>
+                }
 
         </div>
     }
@@ -344,32 +364,51 @@
 
 
                 <!-- SOLICITUDES MÉDICAS -->
-
+             
                 @if (esAdministrador ||
                      esMedicoGeneral ||
-                     esEspecialista
-                     )
+                     esEspecialista ||
+                     esEnfermero)
                 {
                     <div class="col-md-6 col-lg-4">
+
                         <div class="module-card">
 
-                            <h5>Solicitudes médicas</h5>
+                            @if (esEnfermero)
+                            {
+                                <h5>Mis visitas asignadas</h5>
 
-                            <p>
-                                Control de referencias y
-                                solicitudes a especialistas.
-                            </p>
+                                <p>
+                                    Consulte las visitas médicas en las que fue
+                                    asignado como enfermero acompañante.
+                                </p>
 
-                            <a asp-controller="Solicitudes"
-                               asp-action="Index"
-                               class="btn btn-outline-primary">
-                                Ver solicitudes
-                            </a>
+                                <a asp-controller="Solicitudes"
+                                   asp-action="Index"
+                                   class="btn btn-outline-primary">
+                                    Ver mis visitas
+                                </a>
+                            }
+                            else
+                            {
+                                <h5>Solicitudes médicas</h5>
+
+                                <p>
+                                    Control de referencias y solicitudes
+                                    a especialistas.
+                                </p>
+
+                                <a asp-controller="Solicitudes"
+                                   asp-action="Index"
+                                   class="btn btn-outline-primary">
+                                    Ver solicitudes
+                                </a>
+                            }
 
                         </div>
+
                     </div>
                 }
-
 
                 <!-- FUNDACIÓN -->
 

@@ -12,10 +12,12 @@ namespace Asilo.Web.Controllers
     {
         private readonly AsiloDbContext _context;
 
-        public SolicitudesController(AsiloDbContext context)
+        public SolicitudesController(
+            AsiloDbContext context)
         {
             _context = context;
         }
+
 
         // =====================================================
         // LISTADO DE SOLICITUDES
@@ -23,19 +25,34 @@ namespace Asilo.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles =
-            "Administrador,Médico general,Médico especialista")]
+            "Administrador,Médico general,Médico especialista,Enfermero")]
         public async Task<IActionResult> Index()
         {
-            var consulta = _context.SolicitudesMedicas
-                .Include(s => s.Paciente)
-                .Include(s => s.MedicoEspecialista)
-                .Include(s => s.Enfermero)
-                .Include(s => s.VisitaMedica)
-                .AsQueryable();
+            var consulta =
+                _context.SolicitudesMedicas
 
-            // Si es especialista, solo puede ver
-            // las solicitudes asignadas a él.
-            if (User.IsInRole("Médico especialista"))
+                    .Include(s =>
+                        s.Paciente)
+
+                    .Include(s =>
+                        s.MedicoEspecialista)
+
+                    .Include(s =>
+                        s.Enfermero)
+
+                    .Include(s =>
+                        s.VisitaMedica)
+
+                    .AsQueryable();
+
+
+            // =====================================================
+            // MÉDICO ESPECIALISTA
+            // Solo ve solicitudes asignadas a él
+            // =====================================================
+
+            if (User.IsInRole(
+                "Médico especialista"))
             {
                 var idUsuarioTexto =
                     User.FindFirstValue(
@@ -49,14 +66,52 @@ namespace Asilo.Web.Controllers
                     return Forbid();
                 }
 
-                consulta = consulta.Where(s =>
-                    s.MedicoEspecialistaId == usuarioId
-                );
+
+                consulta =
+                    consulta.Where(s =>
+                        s.MedicoEspecialistaId ==
+                        usuarioId
+                    );
             }
 
-            var solicitudes = await consulta
-                .OrderByDescending(s => s.FechaSolicitud)
-                .ToListAsync();
+
+            // =====================================================
+            // ENFERMERO
+            // Solo ve solicitudes donde fue asignado
+            // =====================================================
+
+            else if (User.IsInRole(
+                "Enfermero"))
+            {
+                var idUsuarioTexto =
+                    User.FindFirstValue(
+                        ClaimTypes.NameIdentifier
+                    );
+
+                if (!int.TryParse(
+                    idUsuarioTexto,
+                    out int usuarioId))
+                {
+                    return Forbid();
+                }
+
+
+                consulta =
+                    consulta.Where(s =>
+                        s.EnfermeroId ==
+                        usuarioId
+                    );
+            }
+
+
+            var solicitudes =
+                await consulta
+
+                    .OrderByDescending(s =>
+                        s.FechaSolicitud)
+
+                    .ToListAsync();
+
 
             return View(solicitudes);
         }
@@ -65,8 +120,6 @@ namespace Asilo.Web.Controllers
         // =====================================================
         // CREAR SOLICITUD
         // Solo médico general / administrador
-        // Actualmente el flujo normal la crea
-        // automáticamente desde ConsultaGeneral.
         // =====================================================
 
         [HttpGet]
@@ -78,8 +131,10 @@ namespace Asilo.Web.Controllers
             string? motivo)
         {
             if (!pacienteId.HasValue ||
-                string.IsNullOrWhiteSpace(especialidad) ||
-                string.IsNullOrWhiteSpace(motivo))
+                string.IsNullOrWhiteSpace(
+                    especialidad) ||
+                string.IsNullOrWhiteSpace(
+                    motivo))
             {
                 TempData["Aviso"] =
                     "La solicitud médica debe generarse desde una consulta del médico general.";
@@ -90,16 +145,29 @@ namespace Asilo.Web.Controllers
                 );
             }
 
-            ViewBag.Pacientes = await _context.Pacientes
-                .OrderBy(p => p.NombreCompleto)
-                .ToListAsync();
 
-            var solicitud = new SolicitudMedica
-            {
-                PacienteId = pacienteId.Value,
-                Especialidad = especialidad,
-                Motivo = motivo
-            };
+            ViewBag.Pacientes =
+                await _context.Pacientes
+
+                    .OrderBy(p =>
+                        p.NombreCompleto)
+
+                    .ToListAsync();
+
+
+            var solicitud =
+                new SolicitudMedica
+                {
+                    PacienteId =
+                        pacienteId.Value,
+
+                    Especialidad =
+                        especialidad,
+
+                    Motivo =
+                        motivo
+                };
+
 
             return View(solicitud);
         }
@@ -116,28 +184,40 @@ namespace Asilo.Web.Controllers
             {
                 ViewBag.Pacientes =
                     await _context.Pacientes
-                        .OrderBy(p => p.NombreCompleto)
+
+                        .OrderBy(p =>
+                            p.NombreCompleto)
+
                         .ToListAsync();
+
 
                 return View(solicitud);
             }
 
+
             solicitud.FechaSolicitud =
                 DateTime.Now;
 
+
             solicitud.Estado =
                 "Pendiente de Fundación";
+
 
             _context.SolicitudesMedicas.Add(
                 solicitud
             );
 
+
             await _context.SaveChangesAsync();
+
 
             TempData["Exito"] =
                 "La solicitud médica fue enviada correctamente a Fundación.";
 
-            return RedirectToAction("Index");
+
+            return RedirectToAction(
+                "Index"
+            );
         }
     }
 }

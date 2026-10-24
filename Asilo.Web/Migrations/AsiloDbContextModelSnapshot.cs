@@ -564,6 +564,47 @@ namespace Asilo.Web.Migrations
                     b.ToTable("HistorialesMedicos");
                 });
 
+            modelBuilder.Entity("Asilo.Web.Models.MedicamentoAplicado", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CantidadAplicada")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaAplicacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Medicamento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Observaciones")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RegistradoPorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TiempoAplicacion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VisitaMedicaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegistradoPorId");
+
+                    b.HasIndex("VisitaMedicaId");
+
+                    b.ToTable("MedicamentosAplicados");
+                });
+
             modelBuilder.Entity("Asilo.Web.Models.Pago", b =>
                 {
                     b.Property<int>("Id")
@@ -964,6 +1005,25 @@ namespace Asilo.Web.Migrations
                         .IsRequired();
 
                     b.Navigation("Paciente");
+                });
+
+            modelBuilder.Entity("Asilo.Web.Models.MedicamentoAplicado", b =>
+                {
+                    b.HasOne("Asilo.Web.Models.Usuario", "RegistradoPor")
+                        .WithMany()
+                        .HasForeignKey("RegistradoPorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Asilo.Web.Models.VisitaMedica", "VisitaMedica")
+                        .WithMany()
+                        .HasForeignKey("VisitaMedicaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("RegistradoPor");
+
+                    b.Navigation("VisitaMedica");
                 });
 
             modelBuilder.Entity("Asilo.Web.Models.Pago", b =>
